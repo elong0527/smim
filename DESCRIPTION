@@ -3,12 +3,11 @@ Type: Package
 Title: Multiple Imputation with Wild Bootstrap Inference
 Version: 0.0.0.9000
 Authors@R: c(
-        person("Yilong", "Zhang", email = "yilong.zhang@merck.com", role = c("aut", "cre"),
-        person("Shu", "Yang", email = "syang24@ncsu.edu", role = "aut"),
+        person("Yilong", "Zhang", email = "yilong.zhang@merck.com", role = c("aut", "cre")),
+        person("Shu", "Yang", email = "syang24@ncsu.edu", role = c("aut")),
         person("Qian", "Guan", email = "qian.guan@merck.com", role = "aut"),
-        person("Guanghan (Frank)", "Liu", email = "guanghan_frank_liu@merck.com", role = "aut"),
+        person("Guanghan (Frank)", "Liu", email = "guanghan_frank_liu@merck.com", role = "aut")
         )
-       )
 Maintainer: Yilong Zhang <yilong.zhang@merck.com>
 Description: Multiple Imputation with Wild Bootstrap Inference
 License: file LICENSE
