@@ -11,7 +11,7 @@ betaC     <- c(0.75)
 LL        <- 3
 n.eval    <- 1000
 n.mi      <- 3
-n.wb      <- 100
+n.wb      <- 5
 n=500
 
 set.seed(seed)
@@ -296,7 +296,6 @@ fit_mi <- coxph_mi(fit,
                    seed = seed,
                    validate = validate)
 
-
 test_that("Validate coxph_martingale and coxph_delta",{
   expect_equivalent(fit_mi$fit_t[, 1:3],
                     data.frame(cumu1.hazard, obs1.times, hazard0) )
@@ -339,3 +338,62 @@ test_that("Validate coxph_delta_mi", {
                                upper = tau.adj + qnorm(0.975) * sqrt(ve.taumi) ))
 
 })
+
+
+
+##################Split Wild Bootstrap###################################################
+
+pattern = as.numeric(R + 1)
+delta = c(1,1,2)[pattern]
+fit$id <- 1:length(data1$time)
+wb_val <- coxph_wb_utility_simple(fit = fit,
+                                  id = fit$id,
+                                  time = as.numeric(data1$time),
+                                  status = as.numeric(data1$status),
+                                  x = fit$x,
+                                  pattern = pattern,
+                                  delta = delta)
+
+expect_equivalent(wb_val$phi, phi1u)
+expect_equivalent(wb_val$st_delta_survival, S2u)
+expect_equivalent(fit_mi$st_delta_con_survival, S2Cu)
+
+
+
+u_time <- sort(unique(data1$time))
+mi_t <- mi_time(data1$time,
+                data1$status,
+                u_time ,
+                wb_val$st_delta_survival,
+                n_mi = n.mi,
+                seed = seed,
+                validate = validate)
+
+mi_surv <- mi_survival(data1$time, u_time, mi_t)
+mi_est_rmst <- mi_rmst(mi_t, tau = LL)
+wb_var <- wild_variance(time = as.numeric(data1$time),
+                        status = as.numeric(data1$status),
+                        u_time = u_time,
+                        imp_time = mi_t,
+                        s_mi = mi_surv[,1],
+                        phi = wb_val$phi,
+                        phi_id = 1:length(data1$time),
+                        st_con_survival = wb_val$st_delta_con_survival,
+                        n_b = n.wb,
+                        tau = LL,
+                        seed = seed,
+                        validate = TRUE)
+
+test_that("Validate Multiple Imputation", {
+  expect_equivalent(mi_surv[,1], S1u.adj)
+  expect_equivalent(mi_surv[,2], fit_mi$fit_t$cnar_surv_mi_se)
+  expect_equivalent(mi_est_rmst[2], sqrt(ve.taumi))
+})
+
+test_that("Validate Wild Bootstrap", {
+  expect_equivalent(wb_var$surv_wb_sd, fit_mi$fit_t$cnar_surv_wb_se)
+  expect_equivalent(wb_var$rmst_wb_sd, sqrt(ve.tau))
+})
+
+
+

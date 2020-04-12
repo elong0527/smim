@@ -1,12 +1,3 @@
-#' Transfer from Hazard Function to Survival Function
-#'
-#' @noRd
-hazard_to_surv <- function(st_hazard){
-  temp <- 1 - st_hazard       # Why do we need to use 1 - st_hazard ??
-  temp[temp < 0] <- 1
-  t(apply(temp,1,cumprod))
-}
-
 #' Delta adjusted Cox Imputation Model
 #'
 #' @inheritParams coxph_mi
