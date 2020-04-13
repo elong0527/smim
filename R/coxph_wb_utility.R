@@ -54,13 +54,13 @@ coxph_wb_utility <- function(fit, id, time, status, x, pattern, delta, fit_imp =
 #' Calculate Components for Wild Bootstrap for Self Imputation
 #'
 #' @noRd
-coxph_wb_utility_simple <- function(fit, id, time, status, x, pattern, delta){
+coxph_wb_utility_simple <- function(fit, id, time, status, x, pattern, delta, wild_boot = TRUE){
 
   .x  <- x
   .surv <- Surv(time, status)
   .time_grid <- sort(unique(time))
 
-  fit_res <- coxph_martingale(fit, .surv = .surv, .x = .x, .time_grid = .time_grid)
+  fit_res <- coxph_martingale(fit, .id = id, .surv = .surv, .x = .x, .time_grid = .time_grid)
 
   # Results from coxph_martingale
 
@@ -89,32 +89,13 @@ coxph_wb_utility_simple <- function(fit, id, time, status, x, pattern, delta){
 
   st_delta_con_survival <- (status == 0) * (1 - st_y) * (st_survival/s_c)^delta
 
-  # # G0
-  # g0 <- colMeans((1 - st_y) * st_delta_con_survival * risk)
-  #
-  # g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
-  #
-  # # G2 - G1
-  # g21 <- apply(.x, 2, function(x){
-  #   t_s1 <- colMeans( (risk * st_y * x)[sub, ])  # S1
-  #   t_e  <- t_s1 / t_s0                          # E = S1 / S0
-  #
-  #   g1_term1 <- hazard_to_surv(g_term * x)
-  #   g2_term1 <- hazard_to_surv( t(t(g_term) * t_e) )
-  #
-  #   g1_term  <- (1 - st_y) * st_delta_con_survival * (- log(g2_term1) + log(g1_term1) )
-  #
-  #   colMeans(g1_term[sub, ])
-  # })
-  #
-  # # Phi
-  # phi_term1  <- sp_score %*% inv_imat %*% t(g21)
-  # phi_term2  <- t(apply(g0 / t_s0 * st_dm * (1 - st_y),1,cumsum))
-  # phi         <- phi_term1 - phi_term2
-
-  phi <- get_phi(st_y, status, sub, delta, x, st_dm, st_delta_con_survival,
-                 sp_score, inv_imat, risk, st_hazard)
-  phi[! id %in% fit$id, ] <- 0
+  if(wild_boot){
+    phi <- get_phi(st_y, status, sub, delta, x, st_dm, st_delta_con_survival,
+                   sp_score, inv_imat, risk, st_hazard)
+    phi[! id %in% fit$id, ] <- 0
+  }else{
+    phi = NULL
+  }
 
   # Export
   list(
@@ -123,10 +104,11 @@ coxph_wb_utility_simple <- function(fit, id, time, status, x, pattern, delta){
     phi = phi)                                          # with same dim in db
 }
 
+
 #' Calculate Components for Wild Bootstrap for External Imputation
 #'
 #' @noRd
-coxph_wb_utility_imp <- function(fit, id, time, status, x, pattern, delta, fit_imp){
+coxph_wb_utility_imp <- function(fit, id, time, status, x, pattern, delta, fit_imp, wild_boot = TRUE){
 
   u_pattern <- unique(pattern)
   n_pattern <- length(u_pattern)
@@ -143,14 +125,14 @@ coxph_wb_utility_imp <- function(fit, id, time, status, x, pattern, delta, fit_i
   .time_grid <- sort(unique(time))
 
   # MAR imputation
-  fit_res <- coxph_martingale(fit, .surv = .surv, .x = .x, .time_grid = .time_grid)
+  fit_res <- coxph_martingale(fit, .id = id, .surv = .surv, .x = .x, .time_grid = .time_grid)
 
   fit_pattern <- list()
   for(i in 1:n_pattern){
     if( all(fit$id == fit_imp[[i]]$id)){
       fit_pattern[[i]] <- fit_res
     }else{
-      fit_pattern[[i]] <- coxph_martingale(fit_imp[[i]], .surv = .surv, .x = .x, .time_grid = .time_grid)
+      fit_pattern[[i]] <- coxph_martingale(fit_imp[[i]], .id = id, .surv = .surv, .x = .x, .time_grid = .time_grid)
     }
   }
 
@@ -191,19 +173,23 @@ coxph_wb_utility_imp <- function(fit, id, time, status, x, pattern, delta, fit_i
 
   st_delta_con_survival <- (status == 0) * (1 - st_y) * (st_survival/s_c)^delta
 
-  phi <- list()
-  for(i in 1:n_pattern){
-    phi[[i]] <- get_phi(st_y, status, sub, delta, x, st_dm, st_delta_con_survival,
-                        fit_pattern[[i]]$sp_score, fit_pattern[[i]]$inv_imat,
-                        fit_pattern[[i]]$fit_s$risk, fit_pattern[[i]]$st_hazard)
+  if(wild_boot){
+    phi <- list()
+    for(i in 1:n_pattern){
+      phi[[i]] <- get_phi(st_y, status, sub, delta, x, st_dm, st_delta_con_survival,
+                          fit_pattern[[i]]$sp_score, fit_pattern[[i]]$inv_imat,
+                          fit_pattern[[i]]$fit_s$risk, fit_pattern[[i]]$st_hazard)
+    }
+
+    phi_pattern <- lapply(1:n_pattern, function(x) phi[[x]][id_pattern[[x]], ])
+    phi_pattern <- do.call(rbind, phi_pattern)
+    phi_pattern <- phi_pattern[order(unlist(id_pattern)), ]
+
+    # Set phi to 0 if the subject is not in fit or fit_imp
+    phi_pattern[! id %in% sub.id, ] <- 0
+  }else{
+    phi_pattern <- NULL
   }
-
-  phi_pattern <- lapply(1:n_pattern, function(x) phi[[x]][id_pattern[[x]], ])
-  phi_pattern <- do.call(rbind, phi_pattern)
-  phi_pattern <- phi_pattern[order(unlist(id_pattern)), ]
-
-  # Set phi to 0 if the subject is not in fit or fit_imp
-  phi_pattern[! id %in% sub.id, ] <- 0
 
   # Export
   list(

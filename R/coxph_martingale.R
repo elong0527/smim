@@ -1,7 +1,7 @@
 #' Martingale Details of a Cox Model Fit
 #'
 #' @inheritParams coxph_mi
-coxph_martingale <- function(fit, .surv = NULL, .x = NULL, .time_grid = NULL){
+coxph_martingale <- function(fit, .id, .surv = NULL, .x = NULL, .time_grid = NULL){
 
   if(is.null(.surv)){
     .surv <- fit$y
@@ -31,8 +31,8 @@ coxph_martingale <- function(fit, .surv = NULL, .x = NULL, .time_grid = NULL){
   fit_str  <- apply(fit_db , 1, paste0, collapse = "-")
   pred_str <- apply(pred_db, 1, paste0, collapse = "-")
 
-  if(all(fit_str %in% pred_str)){
-    sub <- pred_str %in% fit_str
+  if(all(fit$id %in% .id)){
+    sub <- .id %in% fit$id
   }else{
     stop("All data in fit object should be included in .surv and .x")
   }

@@ -51,7 +51,10 @@ deltaC <-1*(R>0)
 # table(R)
 # table(R)/n
 ## observed treatment
-data1      <- list(time=U,status=deltaT,xx1=xx1)
+data1      <- data.frame(time=U,status=deltaT,xx1=xx1, pattern = as.numeric(R + 1))
+data1$delta <- c(1,1,2)[data1$pattern]
+# data1 <- data1 %>% arrange(pattern, delta)
+
 fit        <- coxph(Surv(time, status) ~ xx1 , data1)
 betahat1   <- fit$coefficients
 #v.betahat1 <- vcov(fit)
@@ -286,77 +289,76 @@ ve.tau<-var(tau.wb)
 
 fit <- coxph(Surv(time, status) ~ xx1, data1, x = TRUE, y = TRUE)
 
-
-fit_mi <- coxph_mi(fit,
-                   pattern = as.numeric(R + 1),
-                   delta = c(1, 1, 2),
-                   n_mi = n.mi,
-                   n_wb = n.wb,
-                   cut_point = LL,
-                   seed = seed,
-                   validate = validate)
-
-test_that("Validate coxph_martingale and coxph_delta",{
-  expect_equivalent(fit_mi$fit_t[, 1:3],
-                    data.frame(cumu1.hazard, obs1.times, hazard0) )
-
-  expect_equivalent(fit_mi$st_hazard, piTtilde)
-  expect_equivalent(fit_mi$st_y, matYu)
-  expect_equivalent(fit_mi$t_s0, sx0)
-  expect_equivalent(fit_mi$sp_score, H1i )
-  expect_equivalent(fit_mi$inv_imat, solve(Abeta))
-
-  expect_equivalent(fit_mi$phi, phi1u)
-  expect_equivalent(fit_mi$st_delta_survival, S2u)
-  expect_equivalent(fit_mi$st_delta_con_survival, S2Cu)
-})
-
-test_that("Validate coxph_delta_mi", {
-
-  expect_equivalent( fit_mi$fit_t$cnar_surv, S1u.adj)
-
-  expect_equivalent(fit_mi$s_adj_mi, t(mi.adj) )
-  expect_equivalent(fit_mi$var_adj_mi, t(vemi.adj) )
-  expect_equivalent( fit_mi$fit_t$cnar_surv_mi_se,
-                     sqrt((n.mi+1)/(n.mi)*apply(mi.adj,2,var) + apply(vemi.adj,2,mean)))
-
-  expect_equivalent(fit_mi$fit_t$cnar_surv_wb_se, sqrt(ve.adj))
-
-  expect_equivalent(fit_mi$res_wb,
-                    data.frame(type = "Wild Bootstrap",
-                               rmst = tau.adj,
-                               se_rmst = sqrt(ve.tau),
-                               lower = tau.q1,
-                               upper = tau.q2 ))
-
-
-  expect_equivalent(fit_mi$res_mi,
-                    data.frame(type = "MI with Rubin",
-                               rmst = tau.adj,
-                               se_rmst = sqrt(ve.taumi),
-                               lower = tau.adj - qnorm(0.975) * sqrt(ve.taumi),
-                               upper = tau.adj + qnorm(0.975) * sqrt(ve.taumi) ))
-
-})
+#
+# fit_mi <- coxph_mi(fit,
+#                    pattern = as.numeric(R + 1),
+#                    delta = c(1, 1, 2),
+#                    n_mi = n.mi,
+#                    n_wb = n.wb,
+#                    cut_point = LL,
+#                    seed = seed,
+#                    validate = validate)
+#
+# test_that("Validate coxph_martingale and coxph_delta",{
+#   expect_equivalent(fit_mi$fit_t[, 1:3],
+#                     data.frame(cumu1.hazard, obs1.times, hazard0) )
+#
+#   expect_equivalent(fit_mi$st_hazard, piTtilde)
+#   expect_equivalent(fit_mi$st_y, matYu)
+#   expect_equivalent(fit_mi$t_s0, sx0)
+#   expect_equivalent(fit_mi$sp_score, H1i )
+#   expect_equivalent(fit_mi$inv_imat, solve(Abeta))
+#
+#   expect_equivalent(fit_mi$phi, phi1u)
+#   expect_equivalent(fit_mi$st_delta_survival, S2u)
+#   expect_equivalent(fit_mi$st_delta_con_survival, S2Cu)
+# })
+#
+# test_that("Validate coxph_delta_mi", {
+#
+#   expect_equivalent( fit_mi$fit_t$cnar_surv, S1u.adj)
+#
+#   expect_equivalent(fit_mi$s_adj_mi, t(mi.adj) )
+#   expect_equivalent(fit_mi$var_adj_mi, t(vemi.adj) )
+#   expect_equivalent( fit_mi$fit_t$cnar_surv_mi_se,
+#                      sqrt((n.mi+1)/(n.mi)*apply(mi.adj,2,var) + apply(vemi.adj,2,mean)))
+#
+#   expect_equivalent(fit_mi$fit_t$cnar_surv_wb_se, sqrt(ve.adj))
+#
+#   expect_equivalent(fit_mi$res_wb,
+#                     data.frame(type = "Wild Bootstrap",
+#                                rmst = tau.adj,
+#                                se_rmst = sqrt(ve.tau),
+#                                lower = tau.q1,
+#                                upper = tau.q2 ))
+#
+#
+#   expect_equivalent(fit_mi$res_mi,
+#                     data.frame(type = "MI with Rubin",
+#                                rmst = tau.adj,
+#                                se_rmst = sqrt(ve.taumi),
+#                                lower = tau.adj - qnorm(0.975) * sqrt(ve.taumi),
+#                                upper = tau.adj + qnorm(0.975) * sqrt(ve.taumi) ))
+#
+# })
 
 
 
 ##################Split Wild Bootstrap###################################################
 
-pattern = as.numeric(R + 1)
-delta = c(1,1,2)[pattern]
+
 fit$id <- 1:length(data1$time)
 wb_val <- coxph_wb_utility_simple(fit = fit,
                                   id = fit$id,
                                   time = as.numeric(data1$time),
                                   status = as.numeric(data1$status),
                                   x = fit$x,
-                                  pattern = pattern,
-                                  delta = delta)
+                                  pattern = data1$pattern,
+                                  delta = data1$delta)
 
 expect_equivalent(wb_val$phi, phi1u)
 expect_equivalent(wb_val$st_delta_survival, S2u)
-expect_equivalent(fit_mi$st_delta_con_survival, S2Cu)
+expect_equivalent(wb_val$st_delta_con_survival, S2Cu)
 
 
 
@@ -386,14 +388,32 @@ wb_var <- wild_variance(time = as.numeric(data1$time),
 
 test_that("Validate Multiple Imputation", {
   expect_equivalent(mi_surv[,1], S1u.adj)
-  expect_equivalent(mi_surv[,2], fit_mi$fit_t$cnar_surv_mi_se)
+  expect_equivalent(mi_surv[,2], sqrt((n.mi+1)/(n.mi)*apply(mi.adj,2,var) + apply(vemi.adj,2,mean)))
   expect_equivalent(mi_est_rmst[2], sqrt(ve.taumi))
 })
 
 test_that("Validate Wild Bootstrap", {
-  expect_equivalent(wb_var$surv_wb_sd, fit_mi$fit_t$cnar_surv_wb_se)
+  expect_equivalent(wb_var$surv_wb_sd, sqrt(ve.adj))
   expect_equivalent(wb_var$rmst_wb_sd, sqrt(ve.tau))
 })
 
 
+tmp <- rmst_delta(time = as.numeric(data1$time),
+                  status = as.numeric(data1$status),
+                  x = as.matrix(data1$xx1), group = rep(1, n), data1$pattern, data1$delta,
+                  tau = LL, n_mi = n.mi, n_b = n.wb, seed = seed, wild_boot = TRUE, validate = TRUE)
 
+
+mi_rmst_val <- c(tau.adj, sqrt(ve.taumi), sqrt(ve.tau))
+mi_s_val <- cbind(s = S1u.adj,
+                     mi_sd = sqrt((n.mi+1)/(n.mi)*apply(mi.adj,2,var) + apply(vemi.adj,2,mean)),
+                     wb_sd = sqrt(ve.adj)
+)
+
+# expect_equivalent(tmp$fit_wb$st_delta_survival, wb_val$st_delta_survival)
+# expect_equivalent(tmp$fit_wb$st_delta_con_survival, wb_val$st_delta_con_survival)
+# expect_equivalent(tmp$fit_wb$phi, wb_val$phi)
+# expect_equivalent(tmp$wb_var$surv_wb_sd, wb_var$surv_wb_sd)
+
+expect_equivalent(tmp$rmst[[1]][-1], mi_rmst_val[-1])
+expect_equivalent(tmp$surv[[1]], mi_s_val)

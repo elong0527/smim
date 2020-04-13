@@ -41,11 +41,11 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
   }
 
   ## WB part 2
-  v2_wb     <- phi + st_y + (1 - st_y) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
+  # v2_wb     <- phi + st_y + (1 - st_y) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
 
-  # v2_wb_fit <- phi[phi_id, ] + st_y + (1 - st_y) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
-  # v2_wb_imp <- phi[- phi_id, ]
-  # v2_wb     <- rbind(v2_wb_fit, v2_wb_imp)
+  v2_wb_fit <- phi[phi_id, ] + st_y + (1 - st_y) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
+  v2_wb_imp <- phi[- phi_id, ]
+  v2_wb     <- rbind(v2_wb_fit, v2_wb_imp)
 
   n_v2 <- nrow(v2_wb)
   est_wb2 <- matrix(NA, n_b, n_t)
@@ -53,19 +53,17 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
   for(bb in 1:n_b){
     if(! is.null(seed)){set.seed(seed + bb)}
     u_wb <- rnorm(n_v2)
-    est_wb2[bb, ] <- colMeans(v2_wb * u_wb)
+    est_wb2[bb, ] <- colSums(v2_wb * u_wb) / n
     rmst_wb2[bb]  <- sum(c(0, est_wb2[bb, loc]) * dur)
   }
 
   est_wb <-  est_wb2 + est_wb1
   rmst_wb <- rmst_wb2 + rmst_wb1
 
-  surv_wb_sd <- sqrt(apply(est_wb1,2,var) + colMeans( v2_wb^2)/n)
+  surv_wb_sd <- sqrt(apply(est_wb1,2,var) + colMeans(v2_wb_fit^2)/n)
   rmst_wb_sd <- sd(rmst_wb)
   list(surv_wb_sd = surv_wb_sd,
-       rmst_wb_sd = rmst_wb_sd,
-       v1_mean = v1_mean,
-       v2_wb = v2_wb)
+       rmst_wb_sd = rmst_wb_sd)
 }
 
 
