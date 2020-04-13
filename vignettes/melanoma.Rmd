@@ -70,7 +70,7 @@ fit <- survfit(Surv(time, status) ~ group, data = db)
 plot(fit, col = c(1,2))
 ```
 
-# Delta Adjusted Imputation 
+# Delta Adjusted Imputation  
 
 ## RMST within group
 
