@@ -16,12 +16,12 @@ knitr::opts_chunk$set(
 
 ```{r setup, message = FALSE}
 library(survival)
-library(survminer)
 library(dplyr)
 library(ISwR)
 library(devtools)
 library(survRM2)
-load_all()
+library(miboot)
+# load_all()
 ```
 
 # Data Cleanning 

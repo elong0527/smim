@@ -415,5 +415,5 @@ mi_s_val <- cbind(s = S1u.adj,
 # expect_equivalent(tmp$fit_wb$phi, wb_val$phi)
 # expect_equivalent(tmp$wb_var$surv_wb_sd, wb_var$surv_wb_sd)
 
-expect_equivalent(tmp$rmst[[1]][-1], mi_rmst_val[-1])
-expect_equivalent(tmp$surv[[1]], mi_s_val)
+expect_equivalent(tmp$rmst[, c("sd", "wb_sd")], mi_rmst_val[-1])
+expect_equivalent(tmp$surv[[1]][,c(-1, -2)], mi_s_val)
