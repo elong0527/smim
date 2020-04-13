@@ -33,8 +33,8 @@ library(miboot)
 
 * Delta
   + 1: no adjustment 
-  + >1: hazard is larger than MAR
-  + <1: hazard is smaller than MAR
+  + larger than 1: hazard is larger than MAR
+  + less than 1: hazard is smaller than MAR
   
 ```{r}
 data("melanom")

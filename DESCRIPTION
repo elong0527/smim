@@ -19,7 +19,8 @@ Suggests:
     rmarkdown,
     ISwR,
     dplyr,
-    devtools
+    devtools,
+    survRM2
 Imports: 
     survival
 VignetteBuilder: knitr
