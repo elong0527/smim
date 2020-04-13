@@ -21,7 +21,7 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
   # G2 - G1
   g21 <- apply(x, 2, function(x){
     t_s1 <- colMeans( (risk * st_y * x)[sub, ])  # S1
-    t_e  <- t_s1 / t_s0                          # E = S1 / S0
+    t_e  <- ifelse(t_s0 == 0, 0, t_s1 / t_s0)    # E = S1 / S0
 
     g1_term1 <- hazard_to_surv(g_term * x)
     g2_term1 <- hazard_to_surv( t(t(g_term) * t_e) )
@@ -33,7 +33,8 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
 
   # Phi
   phi_term1  <- sp_score %*% inv_imat %*% t(g21)
-  phi_term2  <- t(apply(g0 / t_s0 * st_dm * (1 - st_y),1,cumsum))
+  g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
+  phi_term2  <- t(apply(g0_t_s0 * st_dm * (1 - st_y),1,cumsum))
   phi         <- phi_term1 - phi_term2
   phi
 }
@@ -129,7 +130,7 @@ coxph_wb_utility_imp <- function(fit, id, time, status, x, pattern, delta, fit_i
 
   fit_pattern <- list()
   for(i in 1:n_pattern){
-    if( all(fit$id == fit_imp[[i]]$id)){
+    if( all(fit$id %in% fit_imp[[i]]$id) & all(fit_imp[[i]]$id %in% fit$id) ){
       fit_pattern[[i]] <- fit_res
     }else{
       fit_pattern[[i]] <- coxph_martingale(fit_imp[[i]], .id = id, .surv = .surv, .x = .x, .time_grid = .time_grid)

@@ -1,7 +1,11 @@
 #' Martingale Details of a Cox Model Fit
 #'
 #' @inheritParams coxph_mi
-coxph_martingale <- function(fit, .id, .surv = NULL, .x = NULL, .time_grid = NULL){
+coxph_martingale <- function(fit, .id = NULL, .surv = NULL, .x = NULL, .time_grid = NULL){
+
+  if(is.null(.id)){
+    .id <- fit$id
+  }
 
   if(is.null(.surv)){
     .surv <- fit$y
@@ -22,14 +26,17 @@ coxph_martingale <- function(fit, .id, .surv = NULL, .x = NULL, .time_grid = NUL
   }
   .time_grid <- sort(unique( c(.time_grid, .surv[,1]) ) )
 
+  if(ncol(.x) == 1 & length(unique(.x)) == 1){
+    fit$coefficients <- 0
+  }
+
+
   stopifnot( nrow(.x) == length(.surv))
   stopifnot( all(.surv[,1] > 0) )
   stopifnot( all(.time_grid > 0) )
 
   fit_db   <- cbind(fit$y[,1], fit$y[,2], fit$x)
   pred_db  <- cbind(.surv[,1], .surv[,2], .x)
-  fit_str  <- apply(fit_db , 1, paste0, collapse = "-")
-  pred_str <- apply(pred_db, 1, paste0, collapse = "-")
 
   if(all(fit$id %in% .id)){
     sub <- .id %in% fit$id
@@ -79,7 +86,7 @@ coxph_martingale <- function(fit, .id, .surv = NULL, .x = NULL, .time_grid = NUL
 
   sp_score <- apply(.x, 2, function(x){
     t_s1  <- colMeans( (fit_s$risk * st_y * x)[sub, ])         # S1
-    t_e   <- t_s1 / t_s0                                       # E = S1 / S0
+    t_e   <- ifelse(t_s0 == 0, 0, t_s1 / t_s0)                 # E = S1 / S0
     score <- rowSums(outer(x, t_e, "-") * st_dm, na.rm = TRUE) # Score function
     score
   })
@@ -88,7 +95,12 @@ coxph_martingale <- function(fit, .id, .surv = NULL, .x = NULL, .time_grid = NUL
   if(n_p == 1){ imat =   sum(fit_detail$imat) / n_fit}
   if(n_p > 1){  imat = apply(fit_detail$imat, c(1,2), sum) / n_fit}
 
-  inv_imat <- solve(imat)   # A^-1
+  if(ncol(.x) == 1 & length(unique(.x)) == 1){
+    inv_imat <- 0
+  }else{
+    inv_imat <- solve(imat)   # A^-1
+  }
+
 
   list(sub   = sub,
        fit_s = fit_s,
