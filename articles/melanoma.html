@@ -158,35 +158,23 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">fit</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))</pre></body></html></div>
 <p><img src="melanoma_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 </div>
-<div id="delta-adjusted-imputation" class="section level1">
+<div id="delta-adjusted-imputation-mar" class="section level1">
 <h1 class="hasAnchor">
-<a href="#delta-adjusted-imputation" class="anchor"></a>Delta Adjusted Imputation</h1>
+<a href="#delta-adjusted-imputation-mar" class="anchor"></a>Delta Adjusted Imputation (MAR)</h1>
 <div id="rmst-within-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-within-group" class="anchor"></a>RMST within group</h2>
-<ul>
-<li>test MAR scenario</li>
-</ul>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">delta</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>)[<span class="no">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
 <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="no">time</span>, <span class="no">status</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">time</span>)), <span class="no">group</span>, <span class="no">pattern</span>, <span class="no">delta</span>, <span class="no">tau</span>, <span class="kw">n_mi</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">n_b</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">1234</span>)
 <span class="no">tmp</span>$<span class="no">rmst</span>
 <span class="co">#&gt;      group     rmst       sd    wb_sd</span>
 <span class="co">#&gt; [1,]     0 83.30155 2.730452 2.101005</span>
 <span class="co">#&gt; [2,]     1 92.17112 3.205243 1.748153</span></pre></body></html></div>
-<ul>
-<li>MNAR scenario</li>
-</ul>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">delta</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>)[<span class="no">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
-<span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="no">time</span>, <span class="no">status</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="no">x</span>, <span class="no">group</span>, <span class="no">pattern</span>, <span class="no">delta</span>, <span class="no">tau</span>, <span class="kw">n_mi</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">n_b</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">1234</span>)
-<span class="no">tmp</span>$<span class="no">rmst</span>
-<span class="co">#&gt;      group     rmst       sd    wb_sd</span>
-<span class="co">#&gt; [1,]     0 81.47395 2.611118 2.081097</span>
-<span class="co">#&gt; [2,]     1 85.90721 2.958621 2.028732</span></pre></body></html></div>
 </div>
 <div id="rmst-between-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-between-group" class="anchor"></a>RMST between group</h2>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">diff_rmst</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">rmst</span>, <span class="no">sd</span>){
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">diff_rmst</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">rmst</span>, <span class="no">sd</span>){
   <span class="no">diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="no">rmst</span>)
   <span class="no">diff_sd</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sd</span>^<span class="fl">2</span>) )
   <span class="no">p_val</span> <span class="kw">&lt;-</span> <span class="fl">2</span>* (<span class="fl">1</span> - <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">diff</span>/<span class="no">diff_sd</span>) ))
@@ -195,35 +183,73 @@
 
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu">diff_rmst</span>(<span class="no">tmp</span>$<span class="no">rmst</span>[,<span class="st">"rmst"</span>], <span class="no">tmp</span>$<span class="no">rmst</span>[, <span class="st">"sd"</span>]),
        <span class="fu">diff_rmst</span>(<span class="no">tmp</span>$<span class="no">rmst</span>[,<span class="st">"rmst"</span>], <span class="no">tmp</span>$<span class="no">rmst</span>[, <span class="st">"wb_sd"</span>]))
-<span class="co">#&gt;          diff       sd         p</span>
-<span class="co">#&gt; [1,] 4.433261 3.946058 0.2612397</span>
-<span class="co">#&gt; [2,] 4.433261 2.906324 0.1271633</span></pre></body></html></div>
+<span class="co">#&gt;          diff       sd           p</span>
+<span class="co">#&gt; [1,] 8.869577 4.210576 0.035160945</span>
+<span class="co">#&gt; [2,] 8.869577 2.733178 0.001173882</span></pre></body></html></div>
 </div>
 <div id="survival-curve-after-imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#survival-curve-after-imputation" class="anchor"></a>Survival Curve After Imputation</h2>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">u_time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">time</span>))
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">u_time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">time</span>))
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">1</span>]][, <span class="st">"time"</span>], <span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">1</span>]][, <span class="st">"survival"</span>], <span class="kw">type</span> <span class="kw">=</span> <span class="st">"l"</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">2</span>]][, <span class="st">"time"</span>], <span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">2</span>]][, <span class="st">"survival"</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="melanoma_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="melanoma_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
 </div>
-<div id="control-based-imputation" class="section level1">
+<div id="delta-adjusted-imputation-mnar" class="section level1">
 <h1 class="hasAnchor">
-<a href="#control-based-imputation" class="anchor"></a>Control Based Imputation</h1>
+<a href="#delta-adjusted-imputation-mnar" class="anchor"></a>Delta Adjusted Imputation (MNAR)</h1>
+<div id="rmst-within-group-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#rmst-within-group-1" class="anchor"></a>RMST within group</h2>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">delta</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>)[<span class="no">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
+<span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="no">time</span>, <span class="no">status</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">time</span>)), <span class="no">group</span>, <span class="no">pattern</span>, <span class="no">delta</span>, <span class="no">tau</span>, <span class="kw">n_mi</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">n_b</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">1234</span>)
+<span class="no">tmp</span>$<span class="no">rmst</span>
+<span class="co">#&gt;      group     rmst       sd    wb_sd</span>
+<span class="co">#&gt; [1,]     0 81.34123 2.603153 2.081679</span>
+<span class="co">#&gt; [2,]     1 86.34650 2.971458 1.916993</span></pre></body></html></div>
+</div>
+<div id="rmst-between-group-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#rmst-between-group-1" class="anchor"></a>RMST between group</h2>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">diff_rmst</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">rmst</span>, <span class="no">sd</span>){
+  <span class="no">diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="no">rmst</span>)
+  <span class="no">diff_sd</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sd</span>^<span class="fl">2</span>) )
+  <span class="no">p_val</span> <span class="kw">&lt;-</span> <span class="fl">2</span>* (<span class="fl">1</span> - <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">diff</span>/<span class="no">diff_sd</span>) ))
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">diff</span> <span class="kw">=</span> <span class="no">diff</span>, <span class="kw">sd</span> <span class="kw">=</span> <span class="no">diff_sd</span>, <span class="kw">p</span> <span class="kw">=</span> <span class="no">p_val</span>)
+}
+
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu">diff_rmst</span>(<span class="no">tmp</span>$<span class="no">rmst</span>[,<span class="st">"rmst"</span>], <span class="no">tmp</span>$<span class="no">rmst</span>[, <span class="st">"sd"</span>]),
+       <span class="fu">diff_rmst</span>(<span class="no">tmp</span>$<span class="no">rmst</span>[,<span class="st">"rmst"</span>], <span class="no">tmp</span>$<span class="no">rmst</span>[, <span class="st">"wb_sd"</span>]))
+<span class="co">#&gt;          diff       sd          p</span>
+<span class="co">#&gt; [1,] 5.005269 3.950439 0.20514964</span>
+<span class="co">#&gt; [2,] 5.005269 2.829885 0.07694096</span></pre></body></html></div>
+</div>
+<div id="survival-curve-after-imputation-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#survival-curve-after-imputation-1" class="anchor"></a>Survival Curve After Imputation</h2>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">u_time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">time</span>))
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">1</span>]][, <span class="st">"time"</span>], <span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">1</span>]][, <span class="st">"survival"</span>], <span class="kw">type</span> <span class="kw">=</span> <span class="st">"l"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">2</span>]][, <span class="st">"time"</span>], <span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">2</span>]][, <span class="st">"survival"</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<p><img src="melanoma_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+</div>
+</div>
+<div id="control-based-imputation-mnar" class="section level1">
+<h1 class="hasAnchor">
+<a href="#control-based-imputation-mnar" class="anchor"></a>Control Based Imputation (MNAR)</h1>
 <ul>
 <li>test MAR scenario</li>
 </ul>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">delta</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>)[<span class="no">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">delta</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span>)[<span class="no">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
 <span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu">rmst_control</span>(<span class="no">time</span>, <span class="no">status</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="no">x</span>, <span class="no">group</span>, <span class="kw">ref_grp</span> <span class="kw">=</span> <span class="fl">0</span>, <span class="no">pattern</span>, <span class="no">delta</span>, <span class="no">tau</span>, <span class="kw">n_mi</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">n_b</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">1234</span>)
 <span class="no">tmp</span>$<span class="no">rmst</span>
 <span class="co">#&gt;      group     rmst       sd    wb_sd</span>
 <span class="co">#&gt; [1,]     0 81.47395 2.611118 2.081097</span>
 <span class="co">#&gt; [2,]     1 85.90721 2.958621 2.222821</span></pre></body></html></div>
-<div id="rmst-between-group-1" class="section level2">
+<div id="rmst-between-group-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#rmst-between-group-1" class="anchor"></a>RMST between group</h2>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">diff_rmst</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">rmst</span>, <span class="no">sd</span>){
+<a href="#rmst-between-group-2" class="anchor"></a>RMST between group</h2>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">diff_rmst</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">rmst</span>, <span class="no">sd</span>){
   <span class="no">diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="no">rmst</span>)
   <span class="no">diff_sd</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sd</span>^<span class="fl">2</span>) )
   <span class="no">p_val</span> <span class="kw">&lt;-</span> <span class="fl">2</span>* (<span class="fl">1</span> - <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">diff</span>/<span class="no">diff_sd</span>) ))
@@ -236,13 +262,13 @@
 <span class="co">#&gt; [1,] 4.433261 3.946058 0.2612397</span>
 <span class="co">#&gt; [2,] 4.433261 3.044979 0.1454134</span></pre></body></html></div>
 </div>
-<div id="survival-curve-after-imputation-1" class="section level2">
+<div id="survival-curve-after-imputation-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#survival-curve-after-imputation-1" class="anchor"></a>Survival Curve After Imputation</h2>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">u_time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">time</span>))
+<a href="#survival-curve-after-imputation-2" class="anchor"></a>Survival Curve After Imputation</h2>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">u_time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">time</span>))
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">1</span>]][, <span class="st">"time"</span>], <span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">1</span>]][, <span class="st">"survival"</span>], <span class="kw">type</span> <span class="kw">=</span> <span class="st">"l"</span>)
 <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">2</span>]][, <span class="st">"time"</span>], <span class="no">tmp</span>$<span class="no">surv</span><span class="kw">[[</span><span class="fl">2</span>]][, <span class="st">"survival"</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
-<p><img src="melanoma_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p><img src="melanoma_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 </div>
 </div>
   </div>
