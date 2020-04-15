@@ -2,11 +2,12 @@
 # Simulation seed
 #---------------------
 
-i.par <- commandArgs(T)
-i.par <- as.numeric(i.par)
-root.file <- paste0(i.par)
+task_id <- as.integer(Sys.getenv("SGE_TASK_ID"))
 
-seed <- i.par
+# Set up Simulation Enviroment
+
+# task_id <- 1
+seed <- task_id
 ###############################
 
 
@@ -24,6 +25,9 @@ library(survRM2)
 #   + less than 1: hazard is smaller than MAR
 
 n <- 1000
+n_mi <- 5   # number of MI
+n_b <- 100   # number of bootstrap
+
 t.time <- rexp(n)   # event time
 c.time <- runif(n, min = 0.1, max = 5)  # censoring time
 
@@ -47,7 +51,7 @@ rm2_diff <- rm2$unadjusted.result[1,]
 
 ## RMST within group
 delta   <- c(1,1,1)[pattern]  # the third number control delta adjustment for MNAR
-tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = 10, n_b = 100, seed = seed)
+tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = n_mi, n_b = n_b, seed = seed)
 tmp$rmst
 
 
@@ -67,8 +71,32 @@ diff_res <- rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]),
                    c(rm2_diff["Est."], diff(rm2_diff[2:3])/2/qnorm(0.975), rm2_diff[4] ) )
 diff_res <- data.frame(type = c("rubin", "wb", "survRM2"), diff_res)
 
-save(res, rm2_res, diff_res, file = file.path(i.par, ".Rdata") )
+save(res, rm2_res, diff_res, file = paste0(task_id, ".Rdata") )
 
 
-
+# library(purrr)
+# library(dplyr)
+# library(tidyr)
+#
+# path <- "/SFS/scratch/zhanyilo/miboot_mar/"
+#
+#
+# res1 = res2 = res3 = list()
+# for(i in 1:1000){
+#   try({
+#     load(file.path(path, paste0(i, ".Rdata")))
+#     res1[[i]] <- diff_res
+#     res2[[i]] <- res
+#     res3[[i]] <- rm2_res
+#   })
+# }
+#
+#
+# db <- res1
+# tmp <- do.call(rbind, res1)
+#
+# tmp %>% group_by(type) %>% summarise(diff_est = mean(diff),
+#                                      sd_empirical = sd(diff),
+#                                      sd_est = mean(sd),
+#                                      type1 = sum(p < 0.05))
 
