@@ -13,7 +13,7 @@ hazard_to_surv <- function(st_hazard){
 get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
                     sp_score, inv_imat, risk, st_hazard){
 
-  if( (ncol(x) == 1) & length(unique(x)) == 1 ){
+  if( (ncol(x) == 1) & (length(unique(x[,1])) == 1) ){
     phi <- st_dm * 0
   }else{
 

@@ -26,7 +26,7 @@ coxph_martingale <- function(fit, .id = NULL, .surv = NULL, .x = NULL, .time_gri
   }
   .time_grid <- sort(unique( c(.time_grid, .surv[,1]) ) )
 
-  if(ncol(.x) == 1 & length(unique(.x)) == 1){
+  if(ncol(.x) == 1 & length(unique(.x[,1])) == 1){
     fit$coefficients <- 0
   }
 
@@ -95,7 +95,7 @@ coxph_martingale <- function(fit, .id = NULL, .surv = NULL, .x = NULL, .time_gri
   if(n_p == 1){ imat =   sum(fit_detail$imat) / n_fit}
   if(n_p > 1){  imat = apply(fit_detail$imat, c(1,2), sum) / n_fit}
 
-  if(ncol(.x) == 1 & length(unique(.x)) == 1){
+  if(ncol(.x) == 1 & length(unique(.x[,1])) == 1){
     inv_imat <- 0
   }else{
     inv_imat <- solve(imat)   # A^-1

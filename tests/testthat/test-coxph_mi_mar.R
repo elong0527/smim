@@ -1,5 +1,5 @@
-library(survival)
-library(testthat)
+# library(survival)
+# library(testthat)
 
 validate <- TRUE
 seed <- 1234
@@ -349,9 +349,9 @@ test_that("Validate Wild Bootstrap", {
 })
 
 
-tmp <- rmst_delta(time = as.numeric(data1$time),
-                  status = as.numeric(data1$status),
-                  x = as.matrix(data1$xx1), group = rep(1, n), data1$pattern, data1$delta,
+tmp <- rmst_delta(time = time,
+                  status = status,
+                  x = x, group = rep(1, n), pattern, c(1,1,1)[pattern],
                   tau = LL, n_mi = n.mi, n_b = n.wb, seed = seed, wild_boot = TRUE, validate = TRUE)
 
 
