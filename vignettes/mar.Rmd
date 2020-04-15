@@ -1,0 +1,87 @@
+---
+title: "mar"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{mar}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(miboot)
+library(survRM2)
+```
+
+# Data Simulation
+
+* Pattern
+  + 1: observed event time
+  + 2: MAR imputation
+  + 3: MNAR imputation 
+
+* Delta
+  + 1: no adjustment 
+  + larger than 1: hazard is larger than MAR
+  + less than 1: hazard is smaller than MAR
+  
+```{r}
+n <- 1000
+t.time <- rexp(n)   # event time
+c.time <- runif(n, min = 0.1, max = 5)  # censoring time
+
+time <- pmin(t.time, c.time)
+
+status <- as.numeric(t.time < c.time)
+
+pattern <- ifelse(status == 1, 1, ifelse(time < 0.5, 2, 3))
+group <- rep(c(0,1), each = 500)
+```
+
+```{r}
+plot(survfit(Surv(time, status) ~ group), col = 1:2)
+```
+
+```{r}
+table(status, pattern, time < 0.5)
+```
+
+# MAR analysis 
+```{r}
+tau <- 3
+```
+
+## survRM2 results
+```{r}
+rmst2(time*10, status, group, tau = tau)
+```
+
+## RMST within group
+```{r}
+delta   <- c(1,1,1)[pattern]  # the third number control delta adjustment for MNAR 
+tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
+tmp$rmst
+```
+
+## RMST between group
+```{r}
+diff_rmst <- function(rmst, sd){
+  diff <- diff(rmst)
+  diff_sd <- sqrt( sum(sd^2) )
+  p_val <- 2* (1 - pnorm( abs(diff/diff_sd) ))
+  c(diff = diff, sd = diff_sd, p = p_val)
+}
+
+rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]), 
+       diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "wb_sd"]))
+```
+
+
+
+
