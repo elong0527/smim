@@ -12,30 +12,36 @@ hazard_to_surv <- function(st_hazard){
 #' @noRd
 get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
                     sp_score, inv_imat, risk, st_hazard){
-  # G0
-  g0 <- colMeans((1 - st_y) * st_con_survival * risk)
 
-  g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
+  if( (ncol(x) == 1) & length(unique(x)) == 1 ){
+    phi <- st_dm * 0
+  }else{
 
-  t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
-  # G2 - G1
-  g21 <- apply(x, 2, function(x){
-    t_s1 <- colMeans( (risk * st_y * x)[sub, ])  # S1
-    t_e  <- ifelse(t_s0 == 0, 0, t_s1 / t_s0)    # E = S1 / S0
+    # G0
+    g0 <- colMeans((1 - st_y) * st_con_survival * risk)
 
-    g1_term1 <- hazard_to_surv(g_term * x)
-    g2_term1 <- hazard_to_surv( t(t(g_term) * t_e) )
+    g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
 
-    g1_term  <- (1 - st_y) * st_con_survival * (- log(g2_term1) + log(g1_term1) )
+    t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
+    # G2 - G1
+    g21 <- apply(x, 2, function(x){
+      t_s1 <- colMeans( (risk * st_y * x)[sub, ])  # S1
+      t_e  <- ifelse(t_s0 == 0, 0, t_s1 / t_s0)    # E = S1 / S0
 
-    colMeans(g1_term[sub, ])
-  })
+      g1_term1 <- hazard_to_surv(g_term * x)
+      g2_term1 <- hazard_to_surv( t(t(g_term) * t_e) )
 
-  # Phi
-  phi_term1  <- sp_score %*% inv_imat %*% t(g21)
-  g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
-  phi_term2  <- t(apply(g0_t_s0 * st_dm * (1 - st_y),1,cumsum))
-  phi         <- phi_term1 - phi_term2
+      g1_term  <- (1 - st_y) * st_con_survival * (- log(g2_term1) + log(g1_term1) )
+
+      colMeans(g1_term[sub, ])
+    })
+
+    # Phi
+    phi_term1  <- sp_score %*% inv_imat %*% t(g21)
+    g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
+    phi_term2  <- t(apply(g0_t_s0 * st_dm * (1 - st_y),1,cumsum))
+    phi         <- phi_term1 - phi_term2
+  }
   phi
 }
 
