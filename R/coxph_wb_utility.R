@@ -12,13 +12,20 @@ hazard_to_surv <- function(st_hazard){
 #' @noRd
 get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
                     sp_score, inv_imat, risk, st_hazard){
-
+  # browser()
   if( (ncol(x) == 1) & (length(unique(x[,1])) == 1) ){
-    phi <- st_dm * 0
+    st_dy <- t(apply(st_y, 1, function(x) ifelse(1:length(x) == sum(x), 1, 0)))
+    tmp <- (1 - st_y) * (1 - status) * st_con_survival * risk
+    g0 <- colMeans(tmp[sub,])
+    t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
+    g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
+    st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
+    phi <- (- t(apply(st_g0_t_s0 * st_dm , 1, cumsum)))
+    # phi <- st_con_survival * (1 - st_y) * (1 - status) * t(apply(g0_t_s0 * st_dm * (1 - st_y) * (1 - status), 1, cumsum)
   }else{
 
     # G0
-    g0 <- colMeans((1 - st_y) * st_con_survival * risk)
+    g0 <- colMeans((1 - st_y) * (1 - status) * st_con_survival * risk)
 
     g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
 
@@ -105,9 +112,11 @@ coxph_wb_utility_simple <- function(fit, id, time, status, x, pattern, delta, wi
   }
 
   # Export
+  rownames(st_delta_survival) <- id
+  rownames(st_delta_con_survival) <- id
   list(
-    st_delta_survival = st_delta_survival[fit$id, ],            # With same dim in fit
-    st_delta_con_survival = st_delta_con_survival[fit$id, ],    # with same dim in fit
+    st_delta_survival = st_delta_survival[as.character(fit$id), ],            # With same dim in fit
+    st_delta_con_survival = st_delta_con_survival[as.character(fit$id), ],    # with same dim in fit
     phi = phi)                                          # with same dim in db
 }
 
