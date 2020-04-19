@@ -43,7 +43,7 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
   ## WB part 2
   # v2_wb     <- phi + st_y + (1 - st_y) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
 
-  v2_wb_fit <- phi[phi_id, ] + st_y + (1 - st_y) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
+  v2_wb_fit <- phi[phi_id, ] + st_y + (1 - st_y) * (1 - status) * st_con_survival - matrix(s_mi, nrow = n, ncol = n_t, byrow = TRUE)
   v2_wb_imp <- phi[- phi_id, ]
   v2_wb     <- rbind(v2_wb_fit, v2_wb_imp)
 
