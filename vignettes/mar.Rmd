@@ -59,13 +59,13 @@ tau <- 3
 
 ## survRM2 results
 ```{r}
-rmst2(time*10, status, group, tau = tau)
+rmst2(time, status, group, tau = tau)
 ```
 
 ## RMST within group
 ```{r}
 delta   <- c(1,1,1)[pattern]  # the third number control delta adjustment for MNAR 
-tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
+tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 123)
 tmp$rmst
 ```
 

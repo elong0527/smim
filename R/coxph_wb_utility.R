@@ -15,12 +15,12 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
   # browser()
   if( (ncol(x) == 1) & (length(unique(x[,1])) == 1) ){
     # browser()
-    tmp <- (1 - st_y) * (1 - status) * st_con_survival * risk
+    tmp <- (1 - st_y) * st_con_survival * risk
     g0 <- colMeans(tmp[sub,])
     t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
     g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
     st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
-    phi <- (- t(apply(st_g0_t_s0 * st_dm , 1, cumsum)))
+    phi <- (- t(apply(st_g0_t_s0 * st_dm , 1, cumsum))) / 2
 
   }else{
 
@@ -48,7 +48,7 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
     phi_term1  <- sp_score %*% inv_imat %*% t(g21)
     g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
     st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
-    phi_term2  <- t(apply(st_g0_t_s0 * st_dm * (1 - st_y),1,cumsum))
+    phi_term2  <- t(apply(st_g0_t_s0 * st_dm * (1 - st_y),1,cumsum)) / 2
     phi         <- phi_term1 - phi_term2
   }
   phi
