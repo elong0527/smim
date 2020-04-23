@@ -16,15 +16,11 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
   dur <- c(u_time[loc], tau) - c(0, u_time[loc])
 
   ## WB part 1
-  v1_imp <- array(NA, c(n_mi, n, n_t))
+  v1_mean <- matrix(0, n, n_t)
   for(kk in 1:n_mi){
-    if(validate){
-      v1_imp[kk,,] <- outer(c(imp_time[status == 0, kk], rep(0, sum(status == 1))), u_time, ">=") * (1 - st_y)
-    }else{
-      v1_imp[kk,,] <- outer(imp_time[, kk] * (status == 0), u_time, ">=") * (1 - st_y)
-    }
+      v1_mean <- v1_mean + outer(imp_time[, kk] * (status == 0), u_time, ">=") * (1 - st_y)
   }
-  v1_mean <- apply(v1_imp, c(2,3), mean)
+  v1_mean <- v1_mean / n_mi
 
   est_wb1<-matrix(0,n_b, n_t)
   rmst_wb1<-rep(0,n_b)
@@ -33,7 +29,8 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
       if(! is.null(seed)){set.seed(seed + bb * 10000 + kk)}
       u_wb        <- rnorm(n)
 
-      thismmu     <- colSums( (v1_imp[kk,,] - v1_mean)*(1- st_y)* u_wb)/ n / n_mi
+      v1_imp <- outer(imp_time[, kk] * (status == 0), u_time, ">=") * (1 - st_y)
+      thismmu     <- colSums( (v1_imp - v1_mean)*(1- st_y)* u_wb)/ n / n_mi
 
       est_wb1[bb,]<- est_wb1[bb,]+ thismmu                         # Survival
       rmst_wb1[bb] <- rmst_wb1[bb]+ sum(c(0,thismmu[loc]) * dur) # RMST
