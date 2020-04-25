@@ -13,24 +13,16 @@ hazard_to_surv <- function(st_hazard){
 get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
                     sp_score, inv_imat, risk, st_hazard){
   # browser()
-  if( (ncol(x) == 1) & (length(unique(x[,1])) == 1) ){
-    # browser()
-    tmp <- (1 - st_y) * st_con_survival * risk
-    g0 <- colMeans(tmp[sub,])
-    t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
-    g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
-    st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
-    phi <- (- t(apply(st_g0_t_s0 * st_dm , 1, cumsum))) / 2
-
-  }else{
 
     # G0
-    tmp <- (1 - st_y) * (1 - status) * st_con_survival * risk
+    tmp <- (1 - st_y) *  st_con_survival * risk
     g0 <- colMeans(tmp[sub,])
-
     g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
-
     t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
+
+  if( (ncol(x) == 1) & (length(unique(x[,1])) == 1) ){
+    hi_term1 <- 0
+  }else{
     # G2 - G1
     g21 <- apply(x, 2, function(x){
       t_s1 <- colMeans( (risk * st_y * x)[sub, ])  # S1
@@ -45,12 +37,13 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
     })
 
     # Phi
-    phi_term1  <- sp_score %*% inv_imat %*% t(g21)
-    g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
-    st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
-    phi_term2  <- t(apply(st_g0_t_s0 * st_dm * (1 - st_y),1,cumsum)) / 2
-    phi         <- phi_term1 - phi_term2
+    phi_term1  <- sp_score %*% inv_imat %*% t(g21)p
   }
+
+  g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
+  st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
+  phi_term2  <- t(apply(st_g0_t_s0 * st_dm * (1 - st_y),1,cumsum)) / 2
+  phi         <- phi_term1 - phi_term2
   phi
 }
 
@@ -80,9 +73,11 @@ coxph_wb_utility_simple <- function(fit, id, time, status, x, pattern, delta, wi
 
   # Results from coxph_martingale
 
+
+
   sub <- fit_res$sub                 # subset of data used in fit
   risk <- fit_res$fit_s$risk         # risk
-  st_y <- fit_res$st_y
+  st_y      <- outer(fit_res$fit_s$time, fit_res$fit_t$time, ">=")
   t_s0 <- fit_res$t_s0
   sp_score <- fit_res$sp_score
   inv_imat <- fit_res$inv_imat
