@@ -37,7 +37,7 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
     })
 
     # Phi
-    phi_term1  <- sp_score %*% inv_imat %*% t(g21)p
+    phi_term1  <- sp_score %*% inv_imat %*% t(g21)
   }
 
   g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
