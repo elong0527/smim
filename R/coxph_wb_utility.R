@@ -17,12 +17,13 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
     # G0
     tmp <- (1 - st_y) *  st_con_survival * risk
     g0 <- colMeans(tmp[sub,])
-    g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
     t_s0 <- colMeans((risk * st_y)[sub, ]) # S0
 
   if( (ncol(x) == 1) & (length(unique(x[,1])) == 1) ){
-    hi_term1 <- 0
+    phi_term1 <- 0
   }else{
+
+    g_term <- st_hazard * (1 - st_y) * delta * (1 - status)
     # G2 - G1
     g21 <- apply(x, 2, function(x){
       t_s1 <- colMeans( (risk * st_y * x)[sub, ])  # S1
@@ -42,8 +43,8 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
 
   g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
   st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
-  phi_term2  <- t(apply(st_g0_t_s0 * st_dm * (1 - st_y),1,cumsum)) / 2
-  phi         <- phi_term1 - phi_term2
+  phi_term2  <- t(apply(st_g0_t_s0 * st_dm,1,cumsum))
+  phi         <- (phi_term1 - phi_term2) / 2
   phi
 }
 

@@ -20,7 +20,8 @@ Suggests:
     ISwR,
     dplyr,
     devtools,
-    survRM2
+    survRM2,
+    speff2trial
 Imports: 
     survival
 VignetteBuilder: knitr

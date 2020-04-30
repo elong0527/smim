@@ -1,8 +1,8 @@
 ---
-title: "melanoma"
+title: "actg175"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{melanoma}
+  %\VignetteIndexEntry{actg175}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,10 +17,11 @@ knitr::opts_chunk$set(
 ```{r setup, message = FALSE}
 library(survival)
 library(dplyr)
-library(ISwR)
+library(speff2trial)
 library(devtools)
 library(survRM2)
 library(miboot)
+library(purrr)
 # load_all()
 ```
 
@@ -37,27 +38,29 @@ library(miboot)
   + less than 1: hazard is smaller than MAR
   
 ```{r}
-data("melanom")
+data(ACTG175)
 
-db <- melanom
-db <- db %>% mutate(
-  time = days/30.25,   # unit in Month
-  status = ifelse(status %in% c(1,3), 0, 1 ),
-  group  = ifelse(thick > median(thick), 1, 0),
-  pattern = ifelse(status == 1, 1, ifelse(time < 8, 2, 3)),
-  log_thick = log(thick)
-) %>% arrange(group, status, pattern, time) %>% 
-  mutate(id = 1:n())
+db <- ACTG175 %>% subset(drugs == 0 & strat == 1)
+db <- db %>% mutate(time = days / 30.25, 
+              status = cens, 
+              group = arms, 
+              pattern = ifelse(status == 1, 1, ifelse(time >= 24, 2, 3))) %>% 
+         subset(group %in% c(0, 1)) %>% 
+         mutate(group = ifelse(group == 0, 0, 1) )
+
+fit <- survfit(Surv(time, status) ~ group, data = db )
+plot(fit)
 
 time <- db$time
 status <- db$status
 group <- db$group
 pattern <- db$pattern
-x <- db %>% select(sex, ulc)
-tau <- 10*12
+x <- db %>% select(age, cd40, symptom, )
+tau <- 2 * 12
 # db0 <- db %>% select(time, status, sex, log_thick)
 # fit <- coxph(Surv(time, status) ~ rep(1, nrow(db0)), data = db0, x = TRUE, y = TRUE)
 ```
+
 
 # MAR analysis 
 ```{r}
@@ -70,7 +73,7 @@ fit <- survfit(Surv(time, status) ~ group, data = db)
 plot(fit, col = c(1,2))
 ```
 
-# Delta Adjusted Imputation (MAR) 
+# Delta Adjusted Imputation (MCAR) 
 
 ## RMST within group
 ```{r}
@@ -103,57 +106,48 @@ lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
 
 ## RMST within group
 ```{r}
-delta   <- c(1,1,1.25)[pattern]  # the third number control delta adjustment for MNAR 
-tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
-tmp$rmst
+.delta <- c(2, 3, 4)
+res <- map(.delta, function(delta0){
+  delta   <- ifelse(group == 0, c(1,1,1)[pattern], c(1,1,delta0)[pattern])  # the third number control delta adjustment for MNAR 
+  tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = 10, n_b = 100, seed = 111)
+  tmp
+})
+res0 <- map(res, function(x) as.data.frame(x$rmst)) 
+names(res0) <- .delta
+res0 <- bind_rows(res0, .id = "delta")
+```
+
+```{r}
+res0 %>% mutate(
+  lower = rmst - 1.96 * sd, 
+  upper = rmst + 1.96 * sd,
+  lower_wb = rmst - 1.96 * wb_sd,
+  upper_wb = rmst + 1.96 * wb_sd
+) %>% mutate_if(is.numeric, formatC, digits = 2, format = "f")
 ```
 
 ## RMST between group
 ```{r}
-diff_rmst <- function(rmst, sd){
+diff_rmst <- function(data){
+  rmst <- data$rmst
+  sd <- data$sd
   diff <- diff(rmst)
   diff_sd <- sqrt( sum(sd^2) )
   p_val <- 2* (1 - pnorm( abs(diff/diff_sd) ))
-  c(diff = diff, sd = diff_sd, p = p_val)
+  print(c(diff = diff, sd = diff_sd, p = p_val))
+  return(1)
 }
 
-rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]), 
-       diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "wb_sd"]))
+res0 %>% group_by(delta) %>% summarise(
+  diff_rmst = diff(rmst), 
+  diff_sd = sqrt( sum(sd^2) ), 
+  diff_wb_sd = sqrt(sum(wb_sd^2)),
+  lower = diff_rmst - 1.96 * diff_sd,
+  upper = diff_rmst + 1.96 * diff_sd,
+  p_val = 2* (1 - pnorm( abs(diff_rmst/diff_sd) )),
+  lower_wb = diff_rmst - 1.96 * diff_wb_sd, 
+  upper_wb = diff_rmst + 1.96 * diff_wb_sd,
+  p_val_wb = 2* (1 - pnorm( abs(diff_rmst/diff_wb_sd) )),
+) %>% mutate_if(is.numeric, formatC, digits = 2, format = "f")
 ```
 
-## Survival Curve After Imputation 
-```{r}
-u_time <- sort(unique(time))
-plot(tmp$surv[[1]][, "time"], tmp$surv[[1]][, "survival"], type = "l")
-lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
-```
-
-# Control Based Imputation (MNAR)
-
-
-* test MAR scenario
-```{r}
-delta   <- c(1,1,1.2)[pattern]  # the third number control delta adjustment for MNAR 
-tmp <- rmst_control(time, status, x = as.matrix(x), group, ref_grp = 0, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
-tmp$rmst
-```
-
-## RMST between group
-```{r}
-diff_rmst <- function(rmst, sd){
-  diff <- diff(rmst)
-  diff_sd <- sqrt( sum(sd^2) )
-  p_val <- 2* (1 - pnorm( abs(diff/diff_sd) ))
-  c(diff = diff, sd = diff_sd, p = p_val)
-}
-
-rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]),       # Sd from Rubin's rule 
-       diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "wb_sd"]))    # Sd from wild Bootstrap
-```
-
-## Survival Curve After Imputation 
-```{r}
-u_time <- sort(unique(time))
-plot(tmp$surv[[1]][, "time"], tmp$surv[[1]][, "survival"], type = "l")
-lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
-```
