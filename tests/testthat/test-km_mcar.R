@@ -116,7 +116,7 @@ fit <- coxph(Surv(time, status) ~ rep(1,n), x = TRUE, y = TRUE)
 
 martingale_val <- coxph_martingale(fit)
 
-expect_equivalent(st_y, martingale_val$st_y)
+
 expect_equivalent(st_hazard, martingale_val$st_hazard)
 expect_equivalent(st_dm, martingale_val$st_dm)
 
