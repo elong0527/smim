@@ -106,7 +106,7 @@ lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
 
 ## RMST within group
 ```{r}
-.delta <- c(2, 3, 4)
+.delta <- c(1, 2, 3, 4)
 res <- map(.delta, function(delta0){
   delta   <- ifelse(group == 0, c(1,1,1)[pattern], c(1,1,delta0)[pattern])  # the third number control delta adjustment for MNAR 
   tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = 10, n_b = 100, seed = 111)
@@ -148,6 +148,6 @@ res0 %>% group_by(delta) %>% summarise(
   lower_wb = diff_rmst - 1.96 * diff_wb_sd, 
   upper_wb = diff_rmst + 1.96 * diff_wb_sd,
   p_val_wb = 2* (1 - pnorm( abs(diff_rmst/diff_wb_sd) )),
-) %>% mutate_if(is.numeric, formatC, digits = 2, format = "f")
+) %>% mutate_if(is.numeric, formatC, digits = 3, format = "f")
 ```
 
