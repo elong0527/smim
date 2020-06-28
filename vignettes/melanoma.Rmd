@@ -128,32 +128,4 @@ plot(tmp$surv[[1]][, "time"], tmp$surv[[1]][, "survival"], type = "l")
 lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
 ```
 
-# Control Based Imputation (MNAR)
 
-
-* test MAR scenario
-```{r}
-delta   <- c(1,1,1.2)[pattern]  # the third number control delta adjustment for MNAR 
-tmp <- rmst_control(time, status, x = as.matrix(x), group, ref_grp = 0, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
-tmp$rmst
-```
-
-## RMST between group
-```{r}
-diff_rmst <- function(rmst, sd){
-  diff <- diff(rmst)
-  diff_sd <- sqrt( sum(sd^2) )
-  p_val <- 2* (1 - pnorm( abs(diff/diff_sd) ))
-  c(diff = diff, sd = diff_sd, p = p_val)
-}
-
-rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]),       # Sd from Rubin's rule 
-       diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "wb_sd"]))    # Sd from wild Bootstrap
-```
-
-## Survival Curve After Imputation 
-```{r}
-u_time <- sort(unique(time))
-plot(tmp$surv[[1]][, "time"], tmp$surv[[1]][, "survival"], type = "l")
-lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
-```
