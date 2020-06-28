@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/actg175.html">actg175</a>
+    </li>
+    <li>
       <a href="../articles/mar.html">mar</a>
     </li>
     <li>
@@ -72,7 +75,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="mar_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>mar</h1>
@@ -85,9 +88,11 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">miboot</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survRM2</span>)
-<span class="co">#&gt; Loading required package: survival</span></pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">miboot</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">survRM2</span>)
+<span class="co">#&gt; Loading required package: survival</span>
+</pre></div>
 <div id="data-simulation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-simulation" class="anchor"></a>Data Simulation</h1>
@@ -107,87 +112,101 @@
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">n</span> <span class="kw">&lt;-</span> <span class="fl">1000</span>
-<span class="no">t.time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">rexp</a></span>(<span class="no">n</span>)   <span class="co"># event time</span>
-<span class="no">c.time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="no">n</span>, <span class="kw">min</span> <span class="kw">=</span> <span class="fl">0.1</span>, <span class="kw">max</span> <span class="kw">=</span> <span class="fl">5</span>)  <span class="co"># censoring time</span>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
+<span class="kw">t.time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html">rexp</a></span>(<span class="kw">n</span>)   <span class="co"># event time</span>
+<span class="kw">c.time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="kw">n</span>, min = <span class="fl">0.1</span>, max = <span class="fl">5</span>)  <span class="co"># censoring time</span>
 
-<span class="no">time</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmin</a></span>(<span class="no">t.time</span>, <span class="no">c.time</span>)
+<span class="kw">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmin</a></span>(<span class="kw">t.time</span>, <span class="kw">c.time</span>)
 
-<span class="no">status</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="no">t.time</span> <span class="kw">&lt;</span> <span class="no">c.time</span>)
+<span class="kw">status</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="kw">t.time</span> <span class="op">&lt;</span> <span class="kw">c.time</span>)
 
-<span class="no">pattern</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">status</span> <span class="kw">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">time</span> <span class="kw">&lt;</span> <span class="fl">0.5</span>, <span class="fl">2</span>, <span class="fl">3</span>))
-<span class="no">group</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>), <span class="kw">each</span> <span class="kw">=</span> <span class="fl">500</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="fu">survfit</span>(<span class="fu">Surv</span>(<span class="no">time</span>, <span class="no">status</span>) ~ <span class="no">group</span>), <span class="kw">col</span> <span class="kw">=</span> <span class="fl">1</span>:<span class="fl">2</span>)</pre></body></html></div>
+<span class="kw">pattern</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">status</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">time</span> <span class="op">&lt;</span> <span class="fl">0.5</span>, <span class="fl">2</span>, <span class="fl">3</span>))
+<span class="kw">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">1</span>), each = <span class="fl">500</span>)
+</pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html">survfit</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">time</span>, <span class="kw">status</span>) <span class="op">~</span> <span class="kw">group</span>), col = <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>)
+</pre></div>
 <p><img src="mar_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="no">status</span>, <span class="no">pattern</span>, <span class="no">time</span> <span class="kw">&lt;</span> <span class="fl">0.5</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="kw">status</span>, <span class="kw">pattern</span>, <span class="kw">time</span> <span class="op">&lt;</span> <span class="fl">0.5</span>)
 <span class="co">#&gt; , ,  = FALSE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       pattern</span>
 <span class="co">#&gt; status   1   2   3</span>
-<span class="co">#&gt;      0   0   0 107</span>
-<span class="co">#&gt;      1 435   0   0</span>
+<span class="co">#&gt;      0   0   0 111</span>
+<span class="co">#&gt;      1 480   0   0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; , ,  = TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       pattern</span>
 <span class="co">#&gt; status   1   2   3</span>
-<span class="co">#&gt;      0   0  79   0</span>
-<span class="co">#&gt;      1 379   0   0</span></pre></body></html></div>
+<span class="co">#&gt;      0   0  66   0</span>
+<span class="co">#&gt;      1 343   0   0</span>
+</pre></div>
 </div>
 <div id="mar-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#mar-analysis" class="anchor"></a>MAR analysis</h1>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">tau</span> <span class="kw">&lt;-</span> <span class="fl">3</span></pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">tau</span> <span class="op">&lt;-</span> <span class="fl">3</span>
+</pre></div>
 <div id="survrm2-results" class="section level2">
 <h2 class="hasAnchor">
 <a href="#survrm2-results" class="anchor"></a>survRM2 results</h2>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/survRM2/man/rmst2.html">rmst2</a></span>(<span class="no">time</span>, <span class="no">status</span>, <span class="no">group</span>, <span class="kw">tau</span> <span class="kw">=</span> <span class="no">tau</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/pkg/survRM2/man/rmst2.html">rmst2</a></span>(<span class="kw">time</span>, <span class="kw">status</span>, <span class="kw">group</span>, tau = <span class="kw">tau</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; The truncation time: tau = 3  was specified. </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Restricted Mean Survival Time (RMST) by arm </span>
 <span class="co">#&gt;               Est.    se lower .95 upper .95</span>
-<span class="co">#&gt; RMST (arm=1) 0.920 0.039     0.844     0.996</span>
-<span class="co">#&gt; RMST (arm=0) 0.957 0.039     0.880     1.034</span>
+<span class="co">#&gt; RMST (arm=1) 0.966 0.038     0.892     1.041</span>
+<span class="co">#&gt; RMST (arm=0) 1.028 0.041     0.947     1.108</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Restricted Mean Time Lost (RMTL) by arm </span>
 <span class="co">#&gt;               Est.    se lower .95 upper .95</span>
-<span class="co">#&gt; RMTL (arm=1) 2.080 0.039     2.004     2.156</span>
-<span class="co">#&gt; RMTL (arm=0) 2.043 0.039     1.966     2.120</span>
+<span class="co">#&gt; RMTL (arm=1) 2.034 0.038     1.959     2.108</span>
+<span class="co">#&gt; RMTL (arm=0) 1.972 0.041     1.892     2.053</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Between-group contrast </span>
 <span class="co">#&gt;                        Est. lower .95 upper .95     p</span>
-<span class="co">#&gt; RMST (arm=1)-(arm=0) -0.037    -0.145     0.071 0.500</span>
-<span class="co">#&gt; RMST (arm=1)/(arm=0)  0.961     0.857     1.078 0.501</span>
-<span class="co">#&gt; RMTL (arm=1)/(arm=0)  1.018     0.966     1.073 0.501</span></pre></body></html></div>
+<span class="co">#&gt; RMST (arm=1)-(arm=0) -0.061    -0.170     0.048 0.273</span>
+<span class="co">#&gt; RMST (arm=1)/(arm=0)  0.941     0.843     1.049 0.273</span>
+<span class="co">#&gt; RMTL (arm=1)/(arm=0)  1.031     0.976     1.089 0.274</span>
+</pre></div>
 </div>
 <div id="rmst-within-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-within-group" class="anchor"></a>RMST within group</h2>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">delta</span>   <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>)[<span class="no">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
-<span class="no">tmp</span> <span class="kw">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="no">time</span>, <span class="no">status</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">time</span>)), <span class="no">group</span>, <span class="no">pattern</span>, <span class="no">delta</span>, <span class="no">tau</span>, <span class="kw">n_mi</span> <span class="kw">=</span> <span class="fl">5</span>, <span class="kw">n_b</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">seed</span> <span class="kw">=</span> <span class="fl">123</span>)
-<span class="no">tmp</span>$<span class="no">rmst</span>
-<span class="co">#&gt;      group      rmst         sd     wb_sd</span>
-<span class="co">#&gt; [1,]     0 0.9572021 0.03691312 0.0368799</span>
-<span class="co">#&gt; [2,]     1 0.9218238 0.03639850 0.0378457</span></pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw">delta</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>)[<span class="kw">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
+<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="kw">time</span>, <span class="kw">status</span>, x = <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">time</span>)), <span class="kw">group</span>, <span class="kw">pattern</span>, <span class="kw">delta</span>, <span class="kw">tau</span>, n_mi = <span class="fl">5</span>, n_b = <span class="fl">100</span>, seed = <span class="fl">123</span>)
+<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>
+<span class="co">#&gt;      group      rmst         sd      wb_sd</span>
+<span class="co">#&gt; [1,]     0 1.0265148 0.04291897 0.04002407</span>
+<span class="co">#&gt; [2,]     1 0.9722173 0.03714114 0.03857978</span>
+</pre></div>
 </div>
 <div id="rmst-between-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-between-group" class="anchor"></a>RMST between group</h2>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">diff_rmst</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">rmst</span>, <span class="no">sd</span>){
-  <span class="no">diff</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="no">rmst</span>)
-  <span class="no">diff_sd</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sd</span>^<span class="fl">2</span>) )
-  <span class="no">p_val</span> <span class="kw">&lt;-</span> <span class="fl">2</span>* (<span class="fl">1</span> - <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">diff</span>/<span class="no">diff_sd</span>) ))
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">diff</span> <span class="kw">=</span> <span class="no">diff</span>, <span class="kw">sd</span> <span class="kw">=</span> <span class="no">diff_sd</span>, <span class="kw">p</span> <span class="kw">=</span> <span class="no">p_val</span>)
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">diff_rmst</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">rmst</span>, <span class="kw">sd</span>){
+  <span class="kw">diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="kw">rmst</span>)
+  <span class="kw">diff_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sd</span><span class="op">^</span><span class="fl">2</span>) )
+  <span class="kw">p_val</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">*</span> (<span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">diff</span><span class="op">/</span><span class="kw">diff_sd</span>) ))
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(diff = <span class="kw">diff</span>, sd = <span class="kw">diff_sd</span>, p = <span class="kw">p_val</span>)
 }
 
-<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu">diff_rmst</span>(<span class="no">tmp</span>$<span class="no">rmst</span>[,<span class="st">"rmst"</span>], <span class="no">tmp</span>$<span class="no">rmst</span>[, <span class="st">"sd"</span>]),
-       <span class="fu">diff_rmst</span>(<span class="no">tmp</span>$<span class="no">rmst</span>[,<span class="st">"rmst"</span>], <span class="no">tmp</span>$<span class="no">rmst</span>[, <span class="st">"wb_sd"</span>]))
-<span class="co">#&gt;            diff         sd         p</span>
-<span class="co">#&gt; [1,] -0.0353783 0.05184041 0.4949568</span>
-<span class="co">#&gt; [2,] -0.0353783 0.05284340 0.5031808</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu">diff_rmst</span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[,<span class="st">"rmst"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[, <span class="st">"sd"</span>]), 
+       <span class="fu">diff_rmst</span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[,<span class="st">"rmst"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[, <span class="st">"wb_sd"</span>]))
+<span class="co">#&gt;             diff         sd         p</span>
+<span class="co">#&gt; [1,] -0.05429752 0.05675828 0.3387465</span>
+<span class="co">#&gt; [2,] -0.05429752 0.05559069 0.3286991</span>
+</pre></div>
 </div>
 </div>
   </div>
