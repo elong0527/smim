@@ -1,6 +1,6 @@
 library(testthat)
 library(survival)
 library(dplyr)
-library(miboot)
+library(smim)
 
-test_check("miboot")
+test_check("smim")

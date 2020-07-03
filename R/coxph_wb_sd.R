@@ -1,6 +1,6 @@
 
 
-#' Wild Bootstrap Estimator for Survival Probability
+# Wild Bootstrap Estimator for Survival Probability
 wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:nrow(phi), st_con_survival, n_b, tau, seed, validate = FALSE){
 
   # u_time    <- sort(unique(time))

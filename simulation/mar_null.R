@@ -12,7 +12,7 @@ seed <- task_id
 
 library(purrr)
 library(dplyr)
-library(miboot)
+library(smim)
 library(survRM2)
 source("simu_data.R")
 

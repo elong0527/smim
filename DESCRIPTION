@@ -1,6 +1,6 @@
-Package: miboot
+Package: smim
 Type: Package
-Title: Multiple Imputation with Wild Bootstrap Inference
+Title: Survival Sensitivity Analysis using Multiple Imputation and Martingale
 Version: 0.0.0.9000
 Authors@R: c(
         person("Yilong", "Zhang", email = "yilong.zhang@merck.com", role = c("aut", "cre")),
@@ -9,7 +9,7 @@ Authors@R: c(
         person("Guanghan (Frank)", "Liu", email = "guanghan_frank_liu@merck.com", role = "aut")
         )
 Maintainer: Yilong Zhang <yilong.zhang@merck.com>
-Description: Multiple Imputation with Wild Bootstrap Inference
+Description: Survival Sensitivity Analysis using Multiple Imputation and Martingale.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -21,7 +21,9 @@ Suggests:
     dplyr,
     devtools,
     survRM2,
-    speff2trial
+    speff2trial,
+    purrr
 Imports: 
     survival
 VignetteBuilder: knitr
+RoxygenNote: 7.1.0

@@ -20,7 +20,7 @@ library(dplyr)
 library(speff2trial)
 library(devtools)
 library(survRM2)
-library(miboot)
+library(smim)
 library(purrr)
 # load_all()
 ```

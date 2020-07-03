@@ -1,7 +1,7 @@
 # Multiple Imputation
 
-#' Multiple Imputation for Event Time
-#'
+# Multiple Imputation for Event Time
+#
 mi_time <- function(time, status, u_time, st_survival, n_mi, seed = NULL, validate = FALSE){
 
   # u_time    <- sort(unique(time))
@@ -29,7 +29,7 @@ mi_time <- function(time, status, u_time, st_survival, n_mi, seed = NULL, valida
   imp_time
 }
 
-#' Multiple Imputation Estimator for Survival Probability
+# Multiple Imputation Estimator for Survival Probability
 mi_survival <- function(time, u_time, imp_time){
 
   # u_time    <- sort(unique(time))
@@ -51,7 +51,7 @@ mi_survival <- function(time, u_time, imp_time){
   cbind(survival = s, sd = sqrt(s_var) )
 }
 
-#' Multiple Imputation Estimator for RMST
+# Multiple Imputation Estimator for RMST
 mi_rmst <- function(imp_time, tau){
   n    <- nrow(imp_time)
   n_mi <- ncol(imp_time)

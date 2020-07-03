@@ -1,6 +1,6 @@
-#' Martingale Details of a Cox Model Fit
-#'
-#' @inheritParams coxph_mi
+# Martingale Details of a Cox Model Fit
+#
+# @inheritParams coxph_mi
 coxph_martingale <- function(fit, .id = NULL, .surv = NULL, .x = NULL, .time_grid = NULL){
 
   if(is.null(.id)){

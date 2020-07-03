@@ -1,7 +1,5 @@
 
-#' Delta adjusted RMST within group
-#'
-#'
+# Delta adjusted RMST within group
 rmst_delta <- function(time, status, x, group, pattern, delta, tau, n_mi = 10, n_b = 100, seed = NULL, wild_boot = TRUE, validate = FALSE){
 
   id <- 1:length(time)

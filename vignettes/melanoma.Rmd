@@ -20,7 +20,7 @@ library(dplyr)
 library(ISwR)
 library(devtools)
 library(survRM2)
-library(miboot)
+library(smim)
 # load_all()
 ```
 
