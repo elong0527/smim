@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • smim</title>
+<title>Multiple Imputation with Rubin's rule and Wild Bootstrap — coxph_mi • smim</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Multiple Imputation with Rubin's rule and Wild Bootstrap — coxph_mi" />
+<meta property="og:description" content="Multiple Imputation with Rubin's rule and Wild Bootstrap" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,54 +119,73 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Multiple Imputation with Rubin's rule and Wild Bootstrap</h1>
+    
+    <div class="hidden name"><code>coxph_mi.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Multiple Imputation with Rubin's rule and Wild Bootstrap</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>coxph_mi</span>(
+  <span class='kw'>fit</span>,
+  <span class='kw'>pattern</span>,
+  <span class='kw'>delta</span>,
+  <span class='kw'>n_mi</span>,
+  <span class='kw'>n_wb</span>,
+  <span class='kw'>cut_point</span>,
+  seed = <span class='kw'>NULL</span>,
+  validate = <span class='fl'>FALSE</span>
+)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="coxph_delta.html">coxph_delta()</a></code> <code><a href="coxph_delta.html">coxph_delta()</a></code> </p>
-        </td>
-        <td><p>Delta adjusted Cox Imputation Model</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="coxph_mi.html">coxph_mi()</a></code> </p>
-        </td>
-        <td><p>Multiple Imputation with Rubin's rule and Wild Bootstrap</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="km_martingale.html">km_martingale()</a></code> </p>
-        </td>
-        <td><p>Martingale Details of a Kaplan Meier Estmator</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>fit</th>
+      <td><p>a Cox model object, i.e., the result of <code>coxph</code>.</p></td>
+    </tr>
+    <tr>
+      <th>pattern</th>
+      <td><p>A integer vector of pattern indicator for each subject
+* 1  = observed event time
+* 2  = censoring at random
+* 3+ = censoring not at random</p></td>
+    </tr>
+    <tr>
+      <th>delta</th>
+      <td><p>A numeric vector of adjusted delta in the same length of pattern.
+* delta = 1 is for observed event time and censoring at random.
+* delta &gt; 1 is for censoring time with hazard is larger than the hazard in CAR situation.
+* delta &lt; 1 is for censoring time with hazard is smaller than the hazard in CAR situation.</p></td>
+    </tr>
+    <tr>
+      <th>n_mi</th>
+      <td><p>Number of multiple imputation</p></td>
+    </tr>
+    <tr>
+      <th>n_wb</th>
+      <td><p>Number of bootstrap replications</p></td>
+    </tr>
+    <tr>
+      <th>cut_point</th>
+      <td><p>Cutpoint of RMST</p></td>
+    </tr>
+    <tr>
+      <th>seed</th>
+      <td><p>Randomization seed</p></td>
+    </tr>
+    <tr>
+      <th>validate</th>
+      <td><p>Validation model, default is false. Only used for testing purpose.</p></td>
+    </tr>
     </table>
-  </div>
 
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
