@@ -20,9 +20,9 @@ library(dplyr)
 library(speff2trial)
 library(devtools)
 library(survRM2)
-library(smim)
+# library(smim)
 library(purrr)
-# load_all()
+load_all()
 ```
 
 # Data Cleanning 

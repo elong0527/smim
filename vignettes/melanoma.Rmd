@@ -20,8 +20,8 @@ library(dplyr)
 library(ISwR)
 library(devtools)
 library(survRM2)
-library(smim)
-# load_all()
+# library(smim)
+load_all()
 ```
 
 # Data Cleanning 
