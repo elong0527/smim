@@ -1,5 +1,5 @@
 ---
-title: "actg175"
+title: "Example: actg175 dataset"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{actg175}
@@ -20,12 +20,20 @@ library(dplyr)
 library(speff2trial)
 library(devtools)
 library(survRM2)
-# library(smim)
 library(purrr)
+# library(smim)
 load_all()
 ```
 
 # Data Cleanning 
+
+The dataset is avaiable in `speff2trial::ACTG175`. 
+
+  
+```{r}
+# Load dataset
+data(ACTG175)
+```
 
 * Pattern
   + 1: observed event time
@@ -36,80 +44,54 @@ load_all()
   + 1: no adjustment 
   + larger than 1: hazard is larger than MAR
   + less than 1: hazard is smaller than MAR
-  
-```{r}
-data(ACTG175)
 
-db <- ACTG175 %>% subset(drugs == 0 & strat == 1)
+```{r}
+# Analysis data: antiretroviral naive and no history of intravenous drug use
+db <- ACTG175 %>% subset(drugs == 0 & strat == 1) 
 db <- db %>% mutate(time = days / 30.25, 
               status = cens, 
               group = arms, 
               pattern = ifelse(status == 1, 1, ifelse(time >= 24, 2, 3))) %>% 
          subset(group %in% c(0, 1)) %>% 
          mutate(group = ifelse(group == 0, 0, 1) )
+```
 
+```{r}
 fit <- survfit(Surv(time, status) ~ group, data = db )
-plot(fit)
+plot(fit, col = c(1,2))
+```
 
+```{r}
 time <- db$time
 status <- db$status
 group <- db$group
 pattern <- db$pattern
-x <- db %>% select(age, cd40, symptom, )
+x <- db %>% select(age, cd40, symptom)
 tau <- 2 * 12
-# db0 <- db %>% select(time, status, sex, log_thick)
-# fit <- coxph(Surv(time, status) ~ rep(1, nrow(db0)), data = db0, x = TRUE, y = TRUE)
 ```
 
 
-# MAR analysis 
+# Summary statistics
+
 ```{r}
-rmst2(time, status, group, tau= tau)
+nrow(db)
 ```
 
-```{r, message = FALSE}
-fit <- survfit(Surv(time, status) ~ group, data = db)
-# Visualize with survminer
-plot(fit, col = c(1,2))
+```{r}
+table(group)
+```
+```{r}
+table(status)
 ```
 
-# Delta Adjusted Imputation (MCAR) 
+# Delta Adjusted Imputation 
 
 ## RMST within group
 ```{r}
-delta   <- c(1,1,1)[pattern]  # the third number control delta adjustment for MNAR 
-tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
-tmp$rmst
-```
-
-## RMST between group
-```{r}
-diff_rmst <- function(rmst, sd){
-  diff <- diff(rmst)
-  diff_sd <- sqrt( sum(sd^2) )
-  p_val <- 2* (1 - pnorm( abs(diff/diff_sd) ))
-  c(diff = diff, sd = diff_sd, p = p_val)
-}
-
-rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]), 
-       diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "wb_sd"]))
-```
-
-## Survival Curve After Imputation 
-```{r}
-u_time <- sort(unique(time))
-plot(tmp$surv[[1]][, "time"], tmp$surv[[1]][, "survival"], type = "l")
-lines(tmp$surv[[2]][, "time"], tmp$surv[[2]][, "survival"], col = 2)
-```
-
-# Delta Adjusted Imputation (MNAR) 
-
-## RMST within group
-```{r}
-.delta <- c(1, 2, 3, 4)
+.delta <- c(1, 2, 3, 4, 5)
 res <- map(.delta, function(delta0){
   delta   <- ifelse(group == 0, c(1,1,1)[pattern], c(1,1,delta0)[pattern])  # the third number control delta adjustment for MNAR 
-  tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = 10, n_b = 100, seed = 111)
+  tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = n_mi, n_b = n_b, seed = seed)
   tmp
 })
 res0 <- map(res, function(x) as.data.frame(x$rmst)) 
@@ -151,3 +133,35 @@ res0 %>% group_by(delta) %>% summarise(
 ) %>% mutate_if(is.numeric, formatC, digits = 3, format = "f")
 ```
 
+# Control Based Imputation
+
+```{r}
+delta   <- c(1,1,1)[pattern]  # the third number control delta adjustment for MNAR 
+tmp <- rmst_control(time, status, x = x, 
+                    group = group, 
+                    ref_grp = 0, pattern = pattern, delta = delta, tau = tau, 
+                    n_mi = n_mi, n_b = n_b, seed = seed)
+tmp$rmst
+```
+
+## RMST between group
+```{r}
+diff_rmst <- function(rmst, sd){
+  diff <- diff(rmst)
+  diff_sd <- sqrt( sum(sd^2) )
+  p_val <- 2* (1 - pnorm( abs(diff/diff_sd) ))
+  c(diff = diff, sd = diff_sd, p = p_val)
+}
+
+x <- rbind( diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "sd"]), 
+       diff_rmst(tmp$rmst[,"rmst"], tmp$rmst[, "wb_sd"]))
+x <- as.data.frame(x)
+x$lower <- x$diff - 1.96 * x$sd
+x$upper <- x$diff + 1.96 * x$sd
+round(x, digits = 3)
+```
+
+# Direct Estimator (Tian et.al 2014)
+```{r}
+rmst2(time, status, group, tau= tau)
+```

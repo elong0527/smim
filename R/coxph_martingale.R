@@ -105,6 +105,7 @@ coxph_martingale <- function(fit, .id = NULL, .surv = NULL, .x = NULL, .time_gri
   list(sub   = sub,
        fit_s = fit_s,
        fit_t = fit_t_grid,
+       st_y = st_y,
        st_hazard = st_hazard,
        st_dm = st_dm,
        t_s0 = t_s0,
