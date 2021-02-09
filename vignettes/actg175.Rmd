@@ -136,7 +136,7 @@ res0 %>% group_by(delta) %>% summarise(
   lower_wb = diff_rmst - 1.96 * diff_wb_sd, 
   upper_wb = diff_rmst + 1.96 * diff_wb_sd,
   p_val_wb = 2* (1 - pnorm( abs(diff_rmst/diff_wb_sd) )),
-) %>% mutate_if(is.numeric, formatC, digits = 3, format = "f")
+) %>% mutate_if(is.numeric, formatC, digits = 3, format = "f") %>% data.frame()
 ```
 
 # Control Based Imputation
