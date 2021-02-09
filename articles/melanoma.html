@@ -38,12 +38,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -54,7 +48,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/actg175.html">actg175</a>
+      <a href="../articles/actg175.html">Example: actg175 dataset</a>
     </li>
     <li>
       <a href="../articles/mar.html">mar</a>
@@ -88,15 +82,14 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/therneau/survival">survival</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">ISwR</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://devtools.r-lib.org">devtools</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">survRM2</span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival">survival</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">ISwR</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">survRM2</span><span class="op">)</span>
 <span class="co"># library(smim)</span>
-<span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span>()
-</pre></div>
+<span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div id="data-cleanning" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-cleanning" class="anchor"></a>Data Cleanning</h1>
@@ -116,34 +109,33 @@
 </ul>
 </li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"melanom"</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"melanom"</span><span class="op">)</span>
 
-<span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">melanom</span>
-<span class="kw">db</span> <span class="op">&lt;-</span> <span class="kw">db</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-  time = <span class="kw">days</span><span class="op">/</span><span class="fl">30.25</span>,   <span class="co"># unit in Month</span>
-  status = <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">status</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">3</span>), <span class="fl">0</span>, <span class="fl">1</span> ),
-  group  = <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">thick</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span>(<span class="kw">thick</span>), <span class="fl">1</span>, <span class="fl">0</span>),
-  pattern = <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">status</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">time</span> <span class="op">&lt;</span> <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">3</span>)),
-  log_thick = <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">thick</span>)
-) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="kw">group</span>, <span class="kw">status</span>, <span class="kw">pattern</span>, <span class="kw">time</span>) <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(id = <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span>())
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="va">melanom</span>
+<span class="va">db</span> <span class="op">&lt;-</span> <span class="va">db</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
+  time <span class="op">=</span> <span class="va">days</span><span class="op">/</span><span class="fl">30.25</span>,   <span class="co"># unit in Month</span>
+  status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">status</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">1</span> <span class="op">)</span>,
+  group  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">thick</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">thick</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,
+  pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">time</span> <span class="op">&lt;</span> <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,
+  log_thick <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">thick</span><span class="op">)</span>
+<span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">group</span>, <span class="va">status</span>, <span class="va">pattern</span>, <span class="va">time</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="kw">time</span> <span class="op">&lt;-</span> <span class="kw">db</span><span class="op">$</span><span class="kw">time</span>
-<span class="kw">status</span> <span class="op">&lt;-</span> <span class="kw">db</span><span class="op">$</span><span class="kw">status</span>
-<span class="kw">group</span> <span class="op">&lt;-</span> <span class="kw">db</span><span class="op">$</span><span class="kw">group</span>
-<span class="kw">pattern</span> <span class="op">&lt;-</span> <span class="kw">db</span><span class="op">$</span><span class="kw">pattern</span>
-<span class="kw">x</span> <span class="op">&lt;-</span> <span class="kw">db</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="kw">sex</span>, <span class="kw">ulc</span>)
-<span class="kw">tau</span> <span class="op">&lt;-</span> <span class="fl">10</span><span class="op">*</span><span class="fl">12</span>
+<span class="va">time</span> <span class="op">&lt;-</span> <span class="va">db</span><span class="op">$</span><span class="va">time</span>
+<span class="va">status</span> <span class="op">&lt;-</span> <span class="va">db</span><span class="op">$</span><span class="va">status</span>
+<span class="va">group</span> <span class="op">&lt;-</span> <span class="va">db</span><span class="op">$</span><span class="va">group</span>
+<span class="va">pattern</span> <span class="op">&lt;-</span> <span class="va">db</span><span class="op">$</span><span class="va">pattern</span>
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="va">db</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">sex</span>, <span class="va">ulc</span><span class="op">)</span>
+<span class="va">tau</span> <span class="op">&lt;-</span> <span class="fl">10</span><span class="op">*</span><span class="fl">12</span>
 <span class="co"># db0 &lt;- db %&gt;% select(time, status, sex, log_thick)</span>
-<span class="co"># fit &lt;- coxph(Surv(time, status) ~ rep(1, nrow(db0)), data = db0, x = TRUE, y = TRUE)</span>
-</pre></div>
+<span class="co"># fit &lt;- coxph(Surv(time, status) ~ rep(1, nrow(db0)), data = db0, x = TRUE, y = TRUE)</span></code></pre></div>
 </div>
 <div id="mar-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#mar-analysis" class="anchor"></a>MAR analysis</h1>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/survRM2/man/rmst2.html">rmst2</a></span>(<span class="kw">time</span>, <span class="kw">status</span>, <span class="kw">group</span>, tau= <span class="kw">tau</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/survRM2/man/rmst2.html">rmst2</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, <span class="va">group</span>, tau<span class="op">=</span> <span class="va">tau</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; The truncation time: tau = 120  was specified. </span>
 <span class="co">#&gt; </span>
@@ -163,13 +155,11 @@
 <span class="co">#&gt;                       Est. lower .95 upper .95     p</span>
 <span class="co">#&gt; RMST (arm=1)-(arm=0) 8.882     0.372    17.393 0.041</span>
 <span class="co">#&gt; RMST (arm=1)/(arm=0) 1.107     1.005     1.218 0.039</span>
-<span class="co">#&gt; RMTL (arm=1)/(arm=0) 0.758     0.572     1.003 0.053</span>
-</pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html">survfit</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span>(<span class="kw">time</span>, <span class="kw">status</span>) <span class="op">~</span> <span class="kw">group</span>, data = <span class="kw">db</span>)
+<span class="co">#&gt; RMTL (arm=1)/(arm=0) 0.758     0.572     1.003 0.053</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">group</span>, data <span class="op">=</span> <span class="va">db</span><span class="op">)</span>
 <span class="co"># Visualize with survminer</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">fit</span>, col = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">fit</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="melanoma_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 </div>
 <div id="delta-adjusted-imputation-mar" class="section level1">
@@ -178,41 +168,38 @@
 <div id="rmst-within-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-within-group" class="anchor"></a>RMST within group</h2>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">delta</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>)[<span class="kw">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="kw">time</span>, <span class="kw">status</span>, x = <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">time</span>)), <span class="kw">group</span>, <span class="kw">pattern</span>, <span class="kw">delta</span>, <span class="kw">tau</span>, n_mi = <span class="fl">5</span>, n_b = <span class="fl">100</span>, seed = <span class="fl">1234</span>)
-<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">delta</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="va">pattern</span><span class="op">]</span>  <span class="co"># the third number control delta adjustment for MNAR </span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rmst_delta.html">rmst_delta</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>, <span class="va">group</span>, <span class="va">pattern</span>, <span class="va">delta</span>, <span class="va">tau</span>, n_mi <span class="op">=</span> <span class="fl">5</span>, n_b <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span>
+<span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span>
 <span class="co">#&gt;      group     rmst       sd    wb_sd</span>
-<span class="co">#&gt; [1,]     0 83.55763 2.664831 2.417470</span>
-<span class="co">#&gt; [2,]     1 92.64380 3.307655 2.811689</span>
-</pre></div>
+<span class="co">#&gt; [1,]     0 83.55763 2.664831 2.190611</span>
+<span class="co">#&gt; [2,]     1 92.64380 3.307655 1.806165</span></code></pre></div>
 </div>
 <div id="rmst-between-group" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-between-group" class="anchor"></a>RMST between group</h2>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw">diff_rmst</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">rmst</span>, <span class="kw">sd</span>){
-  <span class="kw">diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="kw">rmst</span>)
-  <span class="kw">diff_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sd</span><span class="op">^</span><span class="fl">2</span>) )
-  <span class="kw">p_val</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">*</span> (<span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">diff</span><span class="op">/</span><span class="kw">diff_sd</span>) ))
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(diff = <span class="kw">diff</span>, sd = <span class="kw">diff_sd</span>, p = <span class="kw">p_val</span>)
-}
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">diff_rmst</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rmst</span>, <span class="va">sd</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="va">rmst</span><span class="op">)</span>
+  <span class="va">diff_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">sd</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">)</span>
+  <span class="va">p_val</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">diff</span><span class="op">/</span><span class="va">diff_sd</span><span class="op">)</span> <span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>diff <span class="op">=</span> <span class="va">diff</span>, sd <span class="op">=</span> <span class="va">diff_sd</span>, p <span class="op">=</span> <span class="va">p_val</span><span class="op">)</span>
+<span class="op">}</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu">diff_rmst</span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[,<span class="st">"rmst"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[, <span class="st">"sd"</span>]), 
-       <span class="fu">diff_rmst</span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[,<span class="st">"rmst"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[, <span class="st">"wb_sd"</span>]))
-<span class="co">#&gt;         diff       sd          p</span>
-<span class="co">#&gt; [1,] 9.08617 4.247577 0.03242416</span>
-<span class="co">#&gt; [2,] 9.08617 3.708066 0.01427057</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span> <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"sd"</span><span class="op">]</span><span class="op">)</span>, 
+       <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"wb_sd"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;         diff       sd           p</span>
+<span class="co">#&gt; [1,] 9.08617 4.247577 0.032424164</span>
+<span class="co">#&gt; [2,] 9.08617 2.839192 0.001373007</span></code></pre></div>
 </div>
 <div id="survival-curve-after-imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#survival-curve-after-imputation" class="anchor"></a>Survival Curve After Imputation</h2>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="kw">u_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="kw">time</span>))
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">1</span>]][, <span class="st">"time"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">1</span>]][, <span class="st">"survival"</span>], type = <span class="st">"l"</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">2</span>]][, <span class="st">"time"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">2</span>]][, <span class="st">"survival"</span>], col = <span class="fl">2</span>)
-</pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">u_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"time"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"survival"</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"time"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"survival"</span><span class="op">]</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="melanoma_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 </div>
 </div>
@@ -222,41 +209,38 @@
 <div id="rmst-within-group-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-within-group-1" class="anchor"></a>RMST within group</h2>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="kw">delta</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1.25</span>)[<span class="kw">pattern</span>]  <span class="co"># the third number control delta adjustment for MNAR </span>
-<span class="kw">tmp</span> <span class="op">&lt;-</span> <span class="fu">rmst_delta</span>(<span class="kw">time</span>, <span class="kw">status</span>, x = <span class="kw">x</span>, <span class="kw">group</span>, <span class="kw">pattern</span>, <span class="kw">delta</span>, <span class="kw">tau</span>, n_mi = <span class="fl">5</span>, n_b = <span class="fl">100</span>, seed = <span class="fl">1234</span>)
-<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">delta</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1.25</span><span class="op">)</span><span class="op">[</span><span class="va">pattern</span><span class="op">]</span>  <span class="co"># the third number control delta adjustment for MNAR </span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rmst_delta.html">rmst_delta</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, x <span class="op">=</span> <span class="va">x</span>, <span class="va">group</span>, <span class="va">pattern</span>, <span class="va">delta</span>, <span class="va">tau</span>, n_mi <span class="op">=</span> <span class="fl">5</span>, n_b <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span>
+<span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span>
 <span class="co">#&gt;      group     rmst       sd    wb_sd</span>
-<span class="co">#&gt; [1,]     0 83.27594 2.681406 2.402939</span>
-<span class="co">#&gt; [2,]     1 89.57342 3.267553 2.862059</span>
-</pre></div>
+<span class="co">#&gt; [1,]     0 83.27594 2.681406 2.210220</span>
+<span class="co">#&gt; [2,]     1 89.57342 3.267553 1.936776</span></code></pre></div>
 </div>
 <div id="rmst-between-group-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#rmst-between-group-1" class="anchor"></a>RMST between group</h2>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="kw">diff_rmst</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">rmst</span>, <span class="kw">sd</span>){
-  <span class="kw">diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span>(<span class="kw">rmst</span>)
-  <span class="kw">diff_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sd</span><span class="op">^</span><span class="fl">2</span>) )
-  <span class="kw">p_val</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">*</span> (<span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>( <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">diff</span><span class="op">/</span><span class="kw">diff_sd</span>) ))
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(diff = <span class="kw">diff</span>, sd = <span class="kw">diff_sd</span>, p = <span class="kw">p_val</span>)
-}
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">diff_rmst</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rmst</span>, <span class="va">sd</span><span class="op">)</span><span class="op">{</span>
+  <span class="va">diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="va">rmst</span><span class="op">)</span>
+  <span class="va">diff_sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">sd</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">)</span>
+  <span class="va">p_val</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">diff</span><span class="op">/</span><span class="va">diff_sd</span><span class="op">)</span> <span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>diff <span class="op">=</span> <span class="va">diff</span>, sd <span class="op">=</span> <span class="va">diff_sd</span>, p <span class="op">=</span> <span class="va">p_val</span><span class="op">)</span>
+<span class="op">}</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>( <span class="fu">diff_rmst</span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[,<span class="st">"rmst"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[, <span class="st">"sd"</span>]), 
-       <span class="fu">diff_rmst</span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[,<span class="st">"rmst"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">rmst</span>[, <span class="st">"wb_sd"</span>]))
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span> <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"sd"</span><span class="op">]</span><span class="op">)</span>, 
+       <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"wb_sd"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;          diff       sd          p</span>
 <span class="co">#&gt; [1,] 6.297474 4.226919 0.13626375</span>
-<span class="co">#&gt; [2,] 6.297474 3.737044 0.09195994</span>
-</pre></div>
+<span class="co">#&gt; [2,] 6.297474 2.938737 0.03211963</span></code></pre></div>
 </div>
 <div id="survival-curve-after-imputation-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#survival-curve-after-imputation-1" class="anchor"></a>Survival Curve After Imputation</h2>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw">u_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="kw">time</span>))
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">1</span>]][, <span class="st">"time"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">1</span>]][, <span class="st">"survival"</span>], type = <span class="st">"l"</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">2</span>]][, <span class="st">"time"</span>], <span class="kw">tmp</span><span class="op">$</span><span class="kw">surv</span>[[<span class="fl">2</span>]][, <span class="st">"survival"</span>], col = <span class="fl">2</span>)
-</pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">u_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"time"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"survival"</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"time"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">surv</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"survival"</span><span class="op">]</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="melanoma_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 </div>
 </div>
@@ -277,7 +261,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

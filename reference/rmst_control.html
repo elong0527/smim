@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Multiple Imputation with Rubin's rule and Wild Bootstrap — coxph_mi • smim</title>
+<title>Control-based imputation for RMST — rmst_control • smim</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Multiple Imputation with Rubin's rule and Wild Bootstrap — coxph_mi" />
-<meta property="og:description" content="Multiple Imputation with Rubin's rule and Wild Bootstrap" />
+<meta property="og:title" content="Control-based imputation for RMST — rmst_control" />
+<meta property="og:description" content="Control-based imputation for RMST" />
 
 
 
@@ -117,68 +117,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Multiple Imputation with Rubin's rule and Wild Bootstrap</h1>
+    <h1>Control-based imputation for RMST</h1>
     
-    <div class="hidden name"><code>coxph_mi.Rd</code></div>
+    <div class="hidden name"><code>rmst_control.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Multiple Imputation with Rubin's rule and Wild Bootstrap</p>
+    <p>Control-based imputation for RMST</p>
     </div>
 
-    <pre class="usage"><span class='fu'>coxph_mi</span><span class='op'>(</span>
-  <span class='va'>fit</span>,
+    <pre class="usage"><span class='fu'>rmst_control</span><span class='op'>(</span>
+  <span class='va'>time</span>,
+  <span class='va'>status</span>,
+  <span class='va'>x</span>,
+  <span class='va'>group</span>,
+  ref_grp <span class='op'>=</span> <span class='fl'>0</span>,
   <span class='va'>pattern</span>,
   <span class='va'>delta</span>,
-  <span class='va'>n_mi</span>,
-  <span class='va'>n_wb</span>,
-  <span class='va'>cut_point</span>,
+  <span class='va'>tau</span>,
+  n_mi <span class='op'>=</span> <span class='fl'>10</span>,
+  n_b <span class='op'>=</span> <span class='fl'>100</span>,
   seed <span class='op'>=</span> <span class='cn'>NULL</span>,
+  wild_boot <span class='op'>=</span> <span class='cn'>TRUE</span>,
   validate <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>fit</th>
-      <td><p>a Cox model object, i.e., the result of <code>coxph</code>.</p></td>
-    </tr>
-    <tr>
-      <th>pattern</th>
-      <td><p>A integer vector of pattern indicator for each subject
-* 1  = observed event time
-* 2  = censoring at random
-* 3+ = censoring not at random</p></td>
-    </tr>
-    <tr>
-      <th>delta</th>
-      <td><p>A numeric vector of adjusted delta in the same length of pattern.
-* delta = 1 is for observed event time and censoring at random.
-* delta &gt; 1 is for censoring time with hazard is larger than the hazard in CAR situation.
-* delta &lt; 1 is for censoring time with hazard is smaller than the hazard in CAR situation.</p></td>
-    </tr>
-    <tr>
-      <th>n_mi</th>
-      <td><p>Number of multiple imputation</p></td>
-    </tr>
-    <tr>
-      <th>n_wb</th>
-      <td><p>Number of bootstrap replications</p></td>
-    </tr>
-    <tr>
-      <th>cut_point</th>
-      <td><p>Cutpoint of RMST</p></td>
-    </tr>
-    <tr>
-      <th>seed</th>
-      <td><p>Randomization seed</p></td>
-    </tr>
-    <tr>
-      <th>validate</th>
-      <td><p>Validation model, default is false. Only used for testing purpose.</p></td>
-    </tr>
-    </table>
 
 
   </div>
