@@ -128,14 +128,14 @@
 <span class="co">#&gt;       pattern</span>
 <span class="co">#&gt; status   1   2   3</span>
 <span class="co">#&gt;      0   0   0 113</span>
-<span class="co">#&gt;      1 448   0   0</span>
+<span class="co">#&gt;      1 450   0   0</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; , ,  = TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       pattern</span>
 <span class="co">#&gt; status   1   2   3</span>
-<span class="co">#&gt;      0   0  60   0</span>
-<span class="co">#&gt;      1 379   0   0</span></code></pre></div>
+<span class="co">#&gt;      0   0  59   0</span>
+<span class="co">#&gt;      1 378   0   0</span></code></pre></div>
 </div>
 <div id="mar-analysis" class="section level1">
 <h1 class="hasAnchor">
@@ -152,21 +152,21 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Restricted Mean Survival Time (RMST) by arm </span>
 <span class="co">#&gt;               Est.    se lower .95 upper .95</span>
-<span class="co">#&gt; RMST (arm=1) 0.965 0.041     0.886     1.045</span>
-<span class="co">#&gt; RMST (arm=0) 0.884 0.037     0.812     0.957</span>
+<span class="co">#&gt; RMST (arm=1) 0.942 0.040     0.864     1.021</span>
+<span class="co">#&gt; RMST (arm=0) 0.964 0.041     0.883     1.045</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Restricted Mean Time Lost (RMTL) by arm </span>
 <span class="co">#&gt;               Est.    se lower .95 upper .95</span>
-<span class="co">#&gt; RMTL (arm=1) 2.035 0.041     1.955     2.114</span>
-<span class="co">#&gt; RMTL (arm=0) 2.116 0.037     2.043     2.188</span>
+<span class="co">#&gt; RMTL (arm=1) 2.058 0.040     1.979     2.136</span>
+<span class="co">#&gt; RMTL (arm=0) 2.036 0.041     1.955     2.117</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Between-group contrast </span>
-<span class="co">#&gt;                       Est. lower .95 upper .95     p</span>
-<span class="co">#&gt; RMST (arm=1)-(arm=0) 0.081    -0.027     0.189 0.141</span>
-<span class="co">#&gt; RMST (arm=1)/(arm=0) 1.091     0.972     1.226 0.140</span>
-<span class="co">#&gt; RMTL (arm=1)/(arm=0) 0.962     0.913     1.013 0.142</span></code></pre></div>
+<span class="co">#&gt;                        Est. lower .95 upper .95     p</span>
+<span class="co">#&gt; RMST (arm=1)-(arm=0) -0.022    -0.134     0.091 0.707</span>
+<span class="co">#&gt; RMST (arm=1)/(arm=0)  0.978     0.869     1.100 0.707</span>
+<span class="co">#&gt; RMTL (arm=1)/(arm=0)  1.011     0.957     1.068 0.707</span></code></pre></div>
 </div>
 <div id="rmst-within-group" class="section level2">
 <h2 class="hasAnchor">
@@ -176,8 +176,8 @@
 <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rmst_delta.html">rmst_delta</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>, <span class="va">group</span>, <span class="va">pattern</span>, <span class="va">delta</span>, <span class="va">tau</span>, n_mi <span class="op">=</span> <span class="fl">5</span>, n_b <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">123</span><span class="op">)</span>
 <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span>
 <span class="co">#&gt;      group      rmst         sd      wb_sd</span>
-<span class="co">#&gt; [1,]     0 0.8799450 0.03472752 0.03127620</span>
-<span class="co">#&gt; [2,]     1 0.9646246 0.04128444 0.03210283</span></code></pre></div>
+<span class="co">#&gt; [1,]     0 0.9524942 0.03968096 0.03423892</span>
+<span class="co">#&gt; [2,]     1 0.9356049 0.03930751 0.03752790</span></code></pre></div>
 </div>
 <div id="rmst-between-group" class="section level2">
 <h2 class="hasAnchor">
@@ -192,9 +192,9 @@
 
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span> <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"sd"</span><span class="op">]</span><span class="op">)</span>, 
        <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"wb_sd"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;            diff         sd          p</span>
-<span class="co">#&gt; [1,] 0.08467961 0.05394817 0.11649718</span>
-<span class="co">#&gt; [2,] 0.08467961 0.04481955 0.05884558</span></code></pre></div>
+<span class="co">#&gt;             diff         sd         p</span>
+<span class="co">#&gt; [1,] -0.01688926 0.05585390 0.7623602</span>
+<span class="co">#&gt; [2,] -0.01688926 0.05080007 0.7395379</span></code></pre></div>
 </div>
 </div>
   </div>
