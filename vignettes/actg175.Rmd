@@ -49,6 +49,7 @@ data(ACTG175)
 # Analysis data: antiretroviral naive and no history of intravenous drug use
 db <- ACTG175 %>% subset(drugs == 0 & strat == 1) 
 db <- db %>% mutate(time = days / 30.25, 
+              age = (age - mean(age)) / sd(age), 
               status = cens, 
               group = arms, 
               pattern = ifelse(status == 1, 1, ifelse(time >= 24, 2, 3))) %>% 
@@ -66,7 +67,7 @@ time <- db$time
 status <- db$status
 group <- db$group
 pattern <- db$pattern
-x <- db %>% select(age, cd40, symptom)
+x <- db %>% select(age, symptom)
 tau <- 2 * 12
 ```
 
@@ -83,12 +84,17 @@ table(group)
 ```{r}
 table(status)
 ```
+```{r}
+n_mi <- 50
+n_b <- 100
+seed <- 1234
+```
 
 # Delta Adjusted Imputation 
 
 ## RMST within group
 ```{r}
-.delta <- c(1, 2, 3, 4, 5)
+.delta <- seq(1, 5, by = 0.5) 
 res <- map(.delta, function(delta0){
   delta   <- ifelse(group == 0, c(1,1,1)[pattern], c(1,1,delta0)[pattern])  # the third number control delta adjustment for MNAR 
   tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = n_mi, n_b = n_b, seed = seed)
@@ -145,6 +151,10 @@ tmp$rmst
 ```
 
 ## RMST between group
+
+* first row: Rubin's rule
+* second row: Wild bootstrap
+
 ```{r}
 diff_rmst <- function(rmst, sd){
   diff <- diff(rmst)
@@ -165,3 +175,27 @@ round(x, digits = 3)
 ```{r}
 rmst2(time, status, group, tau= tau)
 ```
+# Model Diagnosis 
+
+## Placebo group
+```{r}
+fit0 <- coxph(Surv(time, status) ~ age + symptom, data = subset(db, group == 0))
+cox.zph(fit0)
+```
+
+```{r}
+fit_cen0 <- coxph(Surv(time, 1 - status) ~ age + symptom, data = subset(db, group == 0))
+cox.zph(fit_cen0)
+```
+
+## Treatment group
+```{r}
+fit1 <- coxph(Surv(time, status) ~ age + symptom, data = subset(db, group == 1))
+cox.zph(fit1)
+```
+
+```{r}
+fit_cen1 <- coxph(Surv(time, 1 - status) ~ age + symptom, data = subset(db, group == 1))
+cox.zph(fit_cen1)
+```
+

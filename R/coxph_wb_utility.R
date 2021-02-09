@@ -43,8 +43,8 @@ get_phi <- function(st_y, status, sub, delta, x, st_dm, st_con_survival,
 
   g0_t_s0    <- ifelse(t_s0 == 0, 0, g0 / t_s0)
   st_g0_t_s0 <- matrix(g0_t_s0, nrow = nrow(st_dm), ncol = ncol(st_dm), byrow = TRUE)
-  phi_term2  <- t(apply(st_g0_t_s0 * st_dm,1,cumsum))
-  phi         <- (phi_term1 - phi_term2) / 2
+  phi_term2  <- t(apply(st_g0_t_s0 * st_dm * (1 - st_y),1,cumsum))
+  phi         <- (phi_term1 - phi_term2)
   phi
 }
 

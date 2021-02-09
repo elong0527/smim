@@ -1,5 +1,7 @@
 
-# Delta adjusted RMST within group
+#' Delta adjusted RMST within group
+#'
+#' @export
 rmst_delta <- function(time, status, x, group, pattern, delta, tau, n_mi = 10, n_b = 100, seed = NULL, wild_boot = TRUE, validate = FALSE){
 
   id <- 1:length(time)
@@ -57,7 +59,9 @@ rmst_delta <- function(time, status, x, group, pattern, delta, tau, n_mi = 10, n
        fit_wb_group = fit_wb_group)
 }
 
-
+#' Control-based imputation for RMST
+#'
+#' @export
 rmst_control <-  function(time, status, x, group, ref_grp = 0, pattern, delta, tau, n_mi = 10, n_b = 100, seed = NULL, wild_boot = TRUE, validate = FALSE){
 
   id <- 1:length(time)
