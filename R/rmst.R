@@ -33,7 +33,7 @@ rmst_delta <- function(time, status, x, group, pattern, delta, tau, n_mi = 10, n
 
     mi_t <- mi_time(fit$y[,1], fit$y[,2], u_time,
                     fit_wb$st_delta_survival,
-                    n_mi = n_mi, seed = seed, validate = validate)
+                    n_mi = n_mi, pattern = pattern[.id], seed = seed, validate = validate)
     mi_s <- mi_survival(fit$y[,1], u_time, mi_t)
     mi_res <- mi_rmst(mi_t, tau = tau)
 
@@ -106,7 +106,7 @@ rmst_control <-  function(time, status, x, group, ref_grp = 0, pattern, delta, t
 
     mi_t <- mi_time(fit$y[,1], fit$y[,2], u_time,
                     fit_wb$st_delta_survival,
-                    n_mi = n_mi, seed = seed, validate = validate)
+                    n_mi = n_mi, pattern = pattern[.id], seed = seed, validate = validate)
     mi_s <- mi_survival(fit$y[,1], u_time, mi_t)
     mi_res <- mi_rmst(mi_t, tau = tau)
 
