@@ -26,7 +26,7 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
   rmst_wb1<-rep(0,n_b)
   for( bb in 1:n_b ){
     for( kk in 1:n_mi){
-      if(! is.null(seed)){set.seed(seed + bb * 10000 + kk)}
+      # if(! is.null(seed)){set.seed(seed + bb * 10000 + kk)}
       u_wb        <- rnorm(n)
 
       v1_imp <- outer(imp_time[, kk] * (status == 0), u_time, ">=") * (1 - st_y)
@@ -48,7 +48,7 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
   est_wb2 <- matrix(NA, n_b, n_t)
   rmst_wb2 <- rep(0, n_b)
   for(bb in 1:n_b){
-    if(! is.null(seed)){set.seed(seed + bb)}
+    # if(! is.null(seed)){set.seed(seed + bb)}
     u_wb <- rnorm(n_v2)
     est_wb2[bb, ] <- colSums(v2_wb * u_wb) / n
     rmst_wb2[bb]  <- sum(c(0, est_wb2[bb, loc]) * dur)

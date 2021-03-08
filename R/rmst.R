@@ -28,18 +28,42 @@ rmst_delta <- function(time, status, x, group, pattern, delta, tau, n_mi = 10, n
     fit <- coxph(Surv(time, status) ~ ., data = db_id, x = TRUE, y = TRUE)
     fit$id <- .id
 
+    mi_t <- matrix(0, nrow = length(fit$y), ncol = n_mi)
+    for(j in 1:n_mi){
 
-    fit_wb <- coxph_wb_utility_simple(fit, id = id, time = time, status = status, x = x, pattern = pattern, delta = delta, wild_boot = wild_boot)
+    fit_mi <- fit
 
-    mi_t <- mi_time(fit$y[,1], fit$y[,2], u_time,
-                    fit_wb$st_delta_survival,
-                    n_mi = n_mi, pattern = pattern[.id], seed = seed, validate = validate)
+
+    coef_post <- as.numeric(rmvnorm(1, mean = fit_mi$coefficients, sigma = fit_mi$var))
+    names(coef_post) <- names(fit_mi$coefficients)
+    fit_mi$coefficients <- coef_post
+
+    fit_mi$linear.predictors <- NULL
+    fit_mi$linear.predictors <- as.numeric((fit_mi$x) %*% matrix(fit_mi$coefficients, nrow = 2)) -
+                             as.numeric(fit_mi$means %*%  matrix(fit_mi$coefficients, nrow = 2))
+
+    fit_mi$residuals <- sample(fit$residuals)
+    names(fit_mi$residuals) <- names(fit$residuals)
+
+
+
+    fit_wb <- coxph_wb_utility_simple(fit_mi, id = id, time = time, status = status, x = x, pattern = pattern, delta = delta, wild_boot = wild_boot)
+
+    mi_t[, j] <- mi_time(fit$y[,1], fit$y[,2], u_time,
+                         fit_wb$st_delta_survival,
+                         n_mi = 1, pattern = pattern[.id], seed = seed + j *10000, validate = validate)
+
+    }
+
+
     mi_s <- mi_survival(fit$y[,1], u_time, mi_t)
     mi_res <- mi_rmst(mi_t, tau = tau)
 
     if(wild_boot){
+      fit_wb0 <- coxph_wb_utility_simple(fit, id = id, time = time, status = status, x = x, pattern = pattern, delta = delta, wild_boot = wild_boot)
+
       wb_var <- wild_variance(fit$y[,1], fit$y[,2], u_time,
-                              mi_t, mi_s[,1], fit_wb$phi, phi_id = fit$id, fit_wb$st_delta_con_survival,
+                              mi_t, mi_s[,1], fit_wb0$phi, phi_id = fit$id, fit_wb0$st_delta_con_survival,
                               n_b = n_b, tau = tau, seed = seed, validate = validate)
     }else{
       wb_var <- NULL

@@ -14,7 +14,7 @@ mi_time <- function(time, status, u_time, st_survival, n_mi, pattern, seed = NUL
 
   imp_time <- matrix(NA, nrow = n, ncol = n_mi)
   for(kk in 1:n_mi){
-    if(! is.null(seed)){set.seed(seed + kk)}
+    # if(! is.null(seed)){set.seed(seed + kk)}
 
     if(validate){
       u <- imp_upper/kk
@@ -61,9 +61,9 @@ mi_rmst <- function(imp_time, tau){
 
   imp_time_tau <- pmin(imp_time, tau)
   rmst_mi <- colMeans(imp_time_tau)
-  var_mi <- apply(imp_time_tau, 2, var) / n
+  var_mi <- apply(imp_time_tau, 2, var) / (n - 1)
 
-  rmst_var   <- (n_mi+1)/(n_mi)*var(rmst_mi) + mean(var_mi)
+  rmst_var   <- (n_mi+1)/(n_mi) * var(colMeans(imp_time)) + mean(var_mi)
   cbind(rmst = mean(rmst_mi), sd = sqrt(rmst_var))
 }
 

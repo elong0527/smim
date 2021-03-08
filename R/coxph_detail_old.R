@@ -106,7 +106,7 @@ coxph_mi <- function(fit, pattern, delta, n_mi, n_wb, cut_point, seed = NULL, va
 
     imp_data <- matrix(NA, nrow = n, ncol = n_mi)
     for(kk in 1:n_mi){
-      if(! is.null(seed)){set.seed(seed + kk)}
+      # if(! is.null(seed)){set.seed(seed + kk)}
 
       if(validate){
         u <- imp_upper/kk
@@ -166,7 +166,7 @@ coxph_mi <- function(fit, pattern, delta, n_mi, n_wb, cut_point, seed = NULL, va
     rmst_wb1<-rep(0,n_wb)
     for( bb in 1:n_wb ){
       for( kk in 1:n_mi){
-        if(! is.null(seed)){set.seed(seed + bb * 10000 + kk)}
+        # if(! is.null(seed)){set.seed(seed + bb * 10000 + kk)}
         u_wb        <- rnorm(n)
 
         thismmu     <- colSums( (v1_imp[kk,,] - v1_mean)*(1- st_y)* u_wb)/n / n_mi
@@ -182,7 +182,7 @@ coxph_mi <- function(fit, pattern, delta, n_mi, n_wb, cut_point, seed = NULL, va
     est_wb2 <- matrix(NA, n_wb, n_t)
     rmst_wb2 <- rep(0, n_wb)
     for(bb in 1:n_wb){
-      if(! is.null(seed)){set.seed(seed + bb)}
+      # if(! is.null(seed)){set.seed(seed + bb)}
       u_wb <- rnorm(n)
       est_wb2[bb, ] <- colMeans(v2_wb * u_wb)
       rmst_wb2[bb]  <- sum(c(0, est_wb2[bb, loc]) * dur)
