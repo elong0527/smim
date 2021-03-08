@@ -29,8 +29,9 @@ wild_variance <- function(time, status, u_time, imp_time, s_mi, phi, phi_id = 1:
       # if(! is.null(seed)){set.seed(seed + bb * 10000 + kk)}
       u_wb        <- rnorm(n)
 
-      v1_imp <- outer(imp_time[, kk] * (status == 0), u_time, ">=") * (1 - st_y)
-      thismmu     <- colSums( (v1_imp - v1_mean)*(1- st_y)* u_wb)/ n / n_mi
+      v1_imp <- outer(imp_time[, kk] * (status == 0), u_time, ">=") # * (1 - st_y)
+      thismmu     <- colSums( (v1_imp - v1_mean)* u_wb)/ n / n_mi
+      # thismmu     <- colSums( (v1_imp - v1_mean)*(1- st_y)* u_wb)/ n / n_mi
 
       est_wb1[bb,]<- est_wb1[bb,]+ thismmu                         # Survival
       rmst_wb1[bb] <- rmst_wb1[bb]+ sum(c(0,thismmu[loc]) * dur) # RMST
