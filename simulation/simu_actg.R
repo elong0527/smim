@@ -9,7 +9,7 @@ seed <- task_id
 library(survival)
 library(dplyr)
 library(smim)
-
+library(mvtnorm)
 
 simu_one_group <- function(n, x, beta, lambda, betaC, lambdaC, tau, arm, LL,
                            beta_imp = beta, lambda_imp = lambda, delta = 1, vt = NULL, vc = NULL){
@@ -51,10 +51,7 @@ simu_one_group <- function(n, x, beta, lambda, betaC, lambdaC, tau, arm, LL,
 
 }
 
-n_mi <- c(5, 10, 20, 50)
 n_b  <- 100
-
-n <- 500
 tau <- 24
 LL  <- 40
 
@@ -92,7 +89,7 @@ lambdaC   <- 0.01
 # LL        <- 40
 
 
-par <- expand.grid(n_mi = n_mi, n = n)
+par <- expand.grid(n_mi = c(5, 10, 20, 50), n = c(500, 1000))
 res <- list()
 res_true <- list()
 
@@ -101,6 +98,8 @@ for(i in 1:nrow(par)){
 
     # parameters
     par0 <- par[i, ]
+    n <- par0$n
+    n_mi <- par0$n_mi
 
     db0 <- simu_one_group(n = n, x = cbind(rnorm(n), rbinom(n, size = 1, prob = 0.15) ), beta = beta0, lambda = lambda0, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 0, LL = LL, delta = 1)
     db1 <- simu_one_group(n = n, x = cbind(rnorm(n), rbinom(n, size = 1, prob = 0.15) ), beta = beta1, lambda = lambda1, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 1, LL = LL, delta = delta)
@@ -126,8 +125,8 @@ for(i in 1:nrow(par)){
     dt_rmst[3] <- diff(dt_rmst)
 
     # Estimated from rmst_delta
-    # delta1 <- seq(1, 5, by = 1)
-    delta1 <- seq(1,5, by = 1)
+    delta1 <- seq(1, 5, by = 1)
+    # delta1 <- 2
     diff <- list()
     for(iter in 1:length(delta1)){
       db$group <- db$arm
@@ -182,7 +181,7 @@ save(res, res_true, file = filename)
 # module add R/3.6.3
 # cd /SFS/scratch/zhanyilo/smim6
 # rm *
-# qsub -t 1:1000 ~/runr.sh ~/smim/simulation/simu_actg_no_censor.R
+# qsub -t 1:1000 ~/runr.sh ~/smim/simulation/simu_actg.R
 
 #----------------------
 # Summary

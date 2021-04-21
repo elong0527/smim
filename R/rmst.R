@@ -119,6 +119,7 @@ rmst_control <-  function(time, status, x, group, ref_grp = 0, pattern, delta, t
 
   for(i in 1:n_group){
 
+    .id <- id[group == u_group[i]]
     fit <- fit_group[[i]]
 
     if(u_group[i] == ref_grp){

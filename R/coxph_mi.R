@@ -24,8 +24,8 @@ mi_time <- function(time, status, u_time, st_survival, n_mi, pattern, seed = NUL
 
     temp <- rowSums( st_survival >= u)
 
-    # imp_time[, kk] <- ifelse(status == 0, u_time[temp], time)
-    imp_time[, kk] <- ifelse(status == 0 & pattern == 2, u_time[temp], time)
+    imp_time[, kk] <- ifelse(status == 0, u_time[temp], time)
+    # imp_time[, kk] <- ifelse(status == 0 & pattern == 2, u_time[temp], time)
     #imp_time[, kk] <- time
   }
 
