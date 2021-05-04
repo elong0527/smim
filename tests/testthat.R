@@ -2,5 +2,5 @@ library(testthat)
 library(survival)
 library(dplyr)
 library(smim)
-
+library(mvtnorm)
 test_check("smim")
