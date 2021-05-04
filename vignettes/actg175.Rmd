@@ -21,7 +21,7 @@ library(speff2trial)
 library(devtools)
 library(survRM2)
 library(purrr)
-# library(smim)
+library(mvtnorm)
 load_all()
 ```
 
@@ -94,6 +94,7 @@ seed <- 1234
 
 ## RMST within group
 ```{r}
+set.seed(seed)
 .delta <- seq(1, 5, by = 0.5) 
 res <- map(.delta, function(delta0){
   delta   <- ifelse(group == 0, c(1,1,1)[pattern], c(1,1,delta0)[pattern])  # the third number control delta adjustment for MNAR 
