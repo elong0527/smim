@@ -3,3 +3,105 @@ title: "simulation"
 output: html_document
 ---
 
+
+```{r}
+round1 <- function(x, digits) formatC(x, digits = digits, format = "f")
+```
+
+# Return to baseline 
+
+```{r}
+db <- read.csv("../simulation/atcg.csv")
+```
+
+## Within Treatment 
+```{r}
+res <- db %>% subset(group == 1) %>% 
+       mutate(est1       = round1(est * 100, 1), 
+              sd_true1   = round1(sd_true * 100, 1), 
+              sd_est1    = round1(sd_est * 100, 1), 
+              wb_sd_est1 = round1(wb_sd_est * 100, 1), 
+              bias1      = round1((sd_est / sd_true - 1) * 100, 2), 
+              wb_bias1   = round1((wb_sd_est / sd_true - 1) * 100 , 2), 
+              covr1      = round1(covr * 100, 1), 
+              covr_wb1   = round1(covr_wb * 100, 1) ) %>% 
+       select(n, delta, n_mi, est1, sd_true1, sd_est1, wb_sd_est1, bias1, wb_bias1, covr1, covr_wb1) %>% 
+       arrange(n, delta, n_mi)
+```
+
+```{r}
+res 
+```
+
+## Between Treatment 
+```{r}
+res <- db %>% subset(group == 9) %>% 
+       mutate(est1       = round1(est * 100, 1), 
+              sd_true1   = round1(sd_true * 100, 1), 
+              sd_est1    = round1(sd_est * 100, 1), 
+              wb_sd_est1 = round1(wb_sd_est * 100, 1), 
+              bias1      = round1((sd_est / sd_true - 1) * 100, 2), 
+              wb_bias1   = round1((wb_sd_est / sd_true - 1) * 100 , 2), 
+              covr1      = round1(covr * 100, 1), 
+              covr_wb1   = round1(covr_wb * 100, 1) ) %>% 
+       select(n, delta, n_mi, est1, sd_true1, sd_est1, wb_sd_est1, bias1, wb_bias1, covr1, covr_wb1) %>% 
+       arrange(n, n_mi, delta)
+```
+
+```{r}
+res 
+```
+
+```{r}
+write.csv(res, file = "atcg_between.csv")
+```
+
+# Control based simulation
+```{r}
+db <- read.csv("../simulation/atcg_ctl.csv")
+```
+
+## Within Treatment 
+```{r}
+res <- db %>% subset(group == 1) %>% 
+       mutate(est1       = round1(est * 100, 1), 
+              sd_true1   = round1(sd_true * 100, 1), 
+              sd_est1    = round1(sd_est * 100, 1), 
+              wb_sd_est1 = round1(wb_sd_est * 100, 1), 
+              bias1      = round1((sd_est / sd_true - 1) * 100, 2), 
+              wb_bias1   = round1((wb_sd_est / sd_true - 1) * 100 , 2), 
+              covr1      = round1(covr * 100, 1), 
+              covr_wb1   = round1(covr_wb * 100, 1) ) %>% 
+       select(n, delta, n_mi, est1, sd_true1, sd_est1, wb_sd_est1, bias1, wb_bias1, covr1, covr_wb1) %>% 
+       arrange(n, -delta, n_mi)
+```
+
+```{r}
+res
+```
+```{r}
+write.csv(res, file = "atcg_ctl_within.csv")
+```
+
+## Between Group
+```{r}
+res <- db %>% subset(group == 9) %>% 
+       mutate(est1       = round1(est * 100, 1), 
+              sd_true1   = round1(sd_true * 100, 1), 
+              sd_est1    = round1(sd_est * 100, 1), 
+              wb_sd_est1 = round1(wb_sd_est * 100, 1), 
+              bias1      = round1((sd_est / sd_true - 1) * 100, 2), 
+              wb_bias1   = round1((wb_sd_est / sd_true - 1) * 100 , 2), 
+              covr1      = round1(covr * 100, 1), 
+              covr_wb1   = round1(covr_wb * 100, 1) ) %>% 
+       select(n, delta, n_mi, est1, sd_true1, sd_est1, wb_sd_est1, bias1, wb_bias1, covr1, covr_wb1) %>% 
+       arrange(n, -delta, n_mi)
+```
+
+```{r}
+res
+```
+
+```{r}
+write.csv(res, file = "atcg_ctl_between.csv")
+```
