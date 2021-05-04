@@ -53,6 +53,9 @@
       <a href="../articles/actg175.html">Example: actg175 dataset</a>
     </li>
     <li>
+      <a href="../articles/mar.html">mar</a>
+    </li>
+    <li>
       <a href="../articles/melanoma.html">melanoma</a>
     </li>
   </ul>
@@ -87,7 +90,6 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ISwR</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">survRM2</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://mvtnorm.R-forge.R-project.org" class="external-link">mvtnorm</a></span><span class="op">)</span>
 <span class="co"># library(smim)</span>
 <span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div id="data-cleanning" class="section level1">
@@ -170,7 +172,11 @@
 <a href="#rmst-within-group" class="anchor" aria-hidden="true"></a>RMST within group</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">delta</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="va">pattern</span><span class="op">]</span>  <span class="co"># the third number control delta adjustment for MNAR </span>
-<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rmst_delta.html">rmst_delta</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, x <span class="op">=</span> <span class="va">x</span>, <span class="va">group</span>, <span class="va">pattern</span>, <span class="va">delta</span>, <span class="va">tau</span>, n_mi <span class="op">=</span> <span class="fl">5</span>, n_b <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span></code></pre></div>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rmst_delta.html">rmst_delta</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>, <span class="va">group</span>, <span class="va">pattern</span>, <span class="va">delta</span>, <span class="va">tau</span>, n_mi <span class="op">=</span> <span class="fl">5</span>, n_b <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span>
+<span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span>
+<span class="co">#&gt;      group     rmst       sd    wb_sd</span>
+<span class="co">#&gt; [1,]     0 83.55763 2.664831 2.190611</span>
+<span class="co">#&gt; [2,]     1 92.64380 3.307655 1.806165</span></code></pre></div>
 </div>
 <div id="rmst-between-group" class="section level2">
 <h2 class="hasAnchor">
@@ -185,9 +191,9 @@
 
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span> <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"sd"</span><span class="op">]</span><span class="op">)</span>, 
        <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"wb_sd"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;          diff       sd          p</span>
-<span class="co">#&gt; [1,] 6.901403 5.009857 0.16833763</span>
-<span class="co">#&gt; [2,] 6.901403 3.774953 0.06751819</span></code></pre></div>
+<span class="co">#&gt;         diff       sd           p</span>
+<span class="co">#&gt; [1,] 9.08617 4.247577 0.032424164</span>
+<span class="co">#&gt; [2,] 9.08617 2.839192 0.001373007</span></code></pre></div>
 </div>
 <div id="survival-curve-after-imputation" class="section level2">
 <h2 class="hasAnchor">
@@ -210,8 +216,8 @@
 <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rmst_delta.html">rmst_delta</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span>, x <span class="op">=</span> <span class="va">x</span>, <span class="va">group</span>, <span class="va">pattern</span>, <span class="va">delta</span>, <span class="va">tau</span>, n_mi <span class="op">=</span> <span class="fl">5</span>, n_b <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span>
 <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span>
 <span class="co">#&gt;      group     rmst       sd    wb_sd</span>
-<span class="co">#&gt; [1,]     0 83.38361 2.824512 2.881792</span>
-<span class="co">#&gt; [2,]     1 90.36067 4.328183 2.598079</span></code></pre></div>
+<span class="co">#&gt; [1,]     0 83.27594 2.681406 2.210220</span>
+<span class="co">#&gt; [2,]     1 89.57342 3.267553 1.936776</span></code></pre></div>
 </div>
 <div id="rmst-between-group-1" class="section level2">
 <h2 class="hasAnchor">
@@ -227,8 +233,8 @@
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span> <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"sd"</span><span class="op">]</span><span class="op">)</span>, 
        <span class="fu"><a href="../reference/diff_rmst.html">diff_rmst</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>,<span class="st">"rmst"</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">$</span><span class="va">rmst</span><span class="op">[</span>, <span class="st">"wb_sd"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;          diff       sd          p</span>
-<span class="co">#&gt; [1,] 6.977067 5.168272 0.17702217</span>
-<span class="co">#&gt; [2,] 6.977067 3.880044 0.07214644</span></code></pre></div>
+<span class="co">#&gt; [1,] 6.297474 4.226919 0.13626375</span>
+<span class="co">#&gt; [2,] 6.297474 2.938737 0.03211963</span></code></pre></div>
 </div>
 <div id="survival-curve-after-imputation-1" class="section level2">
 <h2 class="hasAnchor">
