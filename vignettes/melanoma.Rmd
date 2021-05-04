@@ -76,8 +76,7 @@ plot(fit, col = c(1,2))
 ## RMST within group
 ```{r}
 delta   <- c(1,1,1)[pattern]  # the third number control delta adjustment for MNAR 
-tmp <- rmst_delta(time, status, x = rep(1, length(time)), group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
-tmp$rmst
+tmp <- rmst_delta(time, status, x = x, group, pattern, delta, tau, n_mi = 5, n_b = 100, seed = 1234)
 ```
 
 ## RMST between group
