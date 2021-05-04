@@ -22,7 +22,8 @@ Suggests:
     devtools,
     survRM2,
     speff2trial,
-    purrr
+    purrr,
+    mvtnorm
 Imports: 
     survival
 VignetteBuilder: knitr
