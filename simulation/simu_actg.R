@@ -56,15 +56,6 @@ tau <- 24
 LL  <- 40
 
 delta <- 2
-# beta0 <- 0.75
-# lambda0 <- 0.03
-#
-# beta1 <- 2
-# lambda1 <- 0.03
-#
-# lambdaC   <- 0.01
-# betaC     <- c(0.25)
-
 
 beta0 <- c(-0.55, 0.65)
 lambda0 <- 0.03
@@ -75,99 +66,73 @@ lambda1 <- 0.03
 betaC     <- c(0.25, 0.20)
 lambdaC   <- 0.01
 
+# parameters
 
-# lambda0   <- 0.03
-# beta0     <- 2
-#
-# lambda1    <- 0.03
-# beta1      <- 0.75
-#
-# lambdaC   <- 0.02
-# betaC     <- -1
-#
-# tau       <- 24
-# LL        <- 40
+n <- 500
+n_mi <- 20
 
+db0 <- simu_one_group(n = n, x = cbind(rnorm(n), rbinom(n, size = 1, prob = 0.15) ), beta = beta0, lambda = lambda0, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 0, LL = LL, delta = 1)
+db1 <- simu_one_group(n = n, x = cbind(rnorm(n), rbinom(n, size = 1, prob = 0.15) ), beta = beta1, lambda = lambda1, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 1, LL = LL, delta = delta)
 
-par <- expand.grid(n_mi = c(5, 10, 20, 50), n = c(500, 1000))
-res <- list()
-res_true <- list()
+db <- rbind(db0, db1)
 
-i = iter = 1
-for(i in 1:nrow(par)){
+# True value
+n_true <- 10000
+dt0 <- simu_one_group(n = n_true, x = cbind(rnorm(n_true), rbinom(n_true, size = 1, prob = 0.15) ), beta = beta0, lambda = lambda0, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 0, LL = LL, delta = 1)
+dt1 <- simu_one_group(n = n_true, x = cbind(rnorm(n_true), rbinom(n_true, size = 1, prob = 0.15) ), beta = beta1, lambda = lambda1, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 1, LL = LL, delta = delta)
 
-    # parameters
-    par0 <- par[i, ]
-    n <- par0$n
-    n_mi <- par0$n_mi
+dt <- rbind(dt0, dt1)
+pct <- rbind(table(dt0$pattern), table(dt1$pattern), table(dt$pattern)/2) / n_true * 100
 
-    db0 <- simu_one_group(n = n, x = cbind(rnorm(n), rbinom(n, size = 1, prob = 0.15) ), beta = beta0, lambda = lambda0, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 0, LL = LL, delta = 1)
-    db1 <- simu_one_group(n = n, x = cbind(rnorm(n), rbinom(n, size = 1, prob = 0.15) ), beta = beta1, lambda = lambda1, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 1, LL = LL, delta = delta)
-
-    db <- rbind(db0, db1)
-
-    # True value
-    n_true <- 10000
-    dt0 <- simu_one_group(n = n_true, x = cbind(rnorm(n_true), rbinom(n_true, size = 1, prob = 0.15) ), beta = beta0, lambda = lambda0, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 0, LL = LL, delta = 1)
-    dt1 <- simu_one_group(n = n_true, x = cbind(rnorm(n_true), rbinom(n_true, size = 1, prob = 0.15) ), beta = beta1, lambda = lambda1, betaC = betaC, lambdaC = lambdaC, tau = tau, arm = 1, LL = LL, delta = delta)
-
-    dt <- rbind(dt0, dt1)
-    pct <- rbind(table(dt0$pattern), table(dt1$pattern), table(dt$pattern)/2) / n_true * 100
-
-    if(i == 1){
-      print(pct)
-    }
-
-    dt_rmst <- c(
-      mean(pmin(subset(dt, arm == 0)$time, tau)),
-      mean(pmin(subset(dt, arm == 1)$time, tau))
-    )
-    dt_rmst[3] <- diff(dt_rmst)
-
-    # Estimated from rmst_delta
-    delta1 <- seq(1, 5, by = 1)
-    # delta1 <- 2
-    diff <- list()
-    for(iter in 1:length(delta1)){
-      db$group <- db$arm
-
-      db$delta_est <- ifelse(db$pattern == 2 & db$group == 1, delta1[iter], 1)
-      # Delta-adjusted estimator
-      fit <- rmst_delta(db$obs,
-                        db$status,
-                        x = db[, c("X1", "X2")],
-                        group = db$group,
-                        pattern = db$pattern,
-                        delta = db$delta_est,
-                        tau = tau,
-                        n_mi = par0$n_mi,
-                        n_b = n_b,
-                        seed = seed, wild_boot = TRUE)
-      # fit$rmst <- cbind(fit$rmst, wb_sd = 0)
-
-      diff[[iter]] <-  data.frame(diff_rmst(fit$rmst), delta = delta1[iter])
-    }
-    diff <- bind_rows(diff)
-
-    # RMST from survRM2
-    fit <- survRM2::rmst2(time = db$obs, status = db$status, arm = db$arm, tau = tau)
-    est <- bind_rows(fit$RMST.arm0$rmst, fit$RMST.arm1$rmst, fit$unadjusted.result[1, ])
-    sd  <- c(sqrt(fit$RMST.arm0$rmst.var), sqrt(fit$RMST.arm1$rmst.var),
-             sqrt(fit$RMST.arm0$rmst.var + fit$RMST.arm1$rmst.var))
-    est$sd <- sd
-    rmst2 <- est %>% mutate(group = c(0,1,9), rmst = Est., sd = sd) %>%
-      select(group, rmst, sd)
-    rmst2$delta <- 88
-
-    #Output
-    res[[i]] <- data.frame(par0, bind_rows(diff, rmst2))
-    res_true[[i]] <- data.frame(par0, group = c(0,1,9), true = dt_rmst, pct = pct)
+if(i == 1){
+  print(pct)
 }
 
+dt_rmst <- c(
+  mean(pmin(subset(dt, arm == 0)$time, tau)),
+  mean(pmin(subset(dt, arm == 1)$time, tau))
+)
+dt_rmst[3] <- diff(dt_rmst)
 
+# Estimated from rmst_delta
+delta1 <- seq(1, 5, by = 1)
+# delta1 <- 2
+diff <- list()
+for(iter in 1:length(delta1)){
+  db$group <- db$arm
 
-res <- bind_rows(res)
-res_true <- bind_rows(res_true)
+  db$delta_est <- ifelse(db$pattern == 2 & db$group == 1, delta1[iter], 1)
+  # Delta-adjusted estimator
+  fit <- rmst_delta(db$obs,
+                    db$status,
+                    x = db[, c("X1", "X2")],
+                    group = db$group,
+                    pattern = db$pattern,
+                    delta = db$delta_est,
+                    tau = tau,
+                    n_mi = par0$n_mi,
+                    n_b = n_b,
+                    seed = seed, wild_boot = TRUE)
+  # fit$rmst <- cbind(fit$rmst, wb_sd = 0)
+
+  diff[[iter]] <-  data.frame(diff_rmst(fit$rmst), delta = delta1[iter])
+}
+diff <- bind_rows(diff)
+
+# RMST from survRM2
+fit <- survRM2::rmst2(time = db$obs, status = db$status, arm = db$arm, tau = tau)
+est <- bind_rows(fit$RMST.arm0$rmst, fit$RMST.arm1$rmst, fit$unadjusted.result[1, ])
+sd  <- c(sqrt(fit$RMST.arm0$rmst.var), sqrt(fit$RMST.arm1$rmst.var),
+         sqrt(fit$RMST.arm0$rmst.var + fit$RMST.arm1$rmst.var))
+est$sd <- sd
+rmst2 <- est %>% mutate(group = c(0,1,9), rmst = Est., sd = sd) %>%
+  select(group, rmst, sd)
+rmst2$delta <- 88
+
+#Output
+res <- data.frame(par0, bind_rows(diff, rmst2))
+res_true <- data.frame(par0, group = c(0,1,9), true = dt_rmst, pct = pct)
+
 
 # Save Simulation Results
 filename <- paste0(task_id,".Rdata")
@@ -182,38 +147,3 @@ save(res, res_true, file = filename)
 # cd /SFS/scratch/zhanyilo/smim6
 # rm *
 # qsub -t 1:1000 ~/runr.sh ~/smim/simulation/simu_actg.R
-
-#----------------------
-# Summary
-#----------------------
-#
-# library(dplyr)
-#
-# path <- "/SFS/scratch/zhanyilo/actg5"
-#
-# res = list()
-# for(i in 1:1000){
-#   try({
-#     load(file.path(path, paste0(i, ".Rdata")))
-#
-#     # res[[i]] <- diff
-#     res[[i]] <- result
-#
-#   })
-# }
-#
-# res <- bind_rows(res)
-#
-# res %>% group_by(n_mi, group, delta) %>%
-#         mutate(true = mean(true)) %>% ungroup()  %>%
-#         mutate(
-#                covr    = (true > rmst - 1.96 * sd) & (true < rmst + 1.96 * sd),
-#                covr_wb = (true > rmst - 1.96 * wb_sd) & (true < rmst + 1.96 * wb_sd)) %>%
-#         group_by(n_mi, group, delta) %>%
-#         summarise(est = mean(rmst),
-#                   true = mean(true),
-#                   sd_true = sd(rmst),
-#                   sd_est = mean(sd),
-#                   wb_sd_est = mean(wb_sd),
-#                   covr = mean(covr),
-#                   covr_wb = mean(covr_wb)) %>% View()
