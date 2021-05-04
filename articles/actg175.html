@@ -224,27 +224,20 @@
   lower_wb <span class="op">=</span> <span class="va">diff_rmst</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">diff_wb_sd</span>, 
   upper_wb <span class="op">=</span> <span class="va">diff_rmst</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">diff_wb_sd</span>,
   p_val_wb <span class="op">=</span> <span class="fl">2</span><span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">diff_rmst</span><span class="op">/</span><span class="va">diff_wb_sd</span><span class="op">)</span> <span class="op">)</span><span class="op">)</span>,
-<span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">mutate_if</a></span><span class="op">(</span><span class="va">is.numeric</span>, <span class="va">formatC</span>, digits <span class="op">=</span> <span class="fl">3</span>, format <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt;   delta diff_rmst diff_sd diff_wb_sd  lower upper p_val lower_wb upper_wb</span>
-<span class="co">#&gt; 1     1     0.928   0.459      0.461  0.028 1.829 0.043    0.024    1.832</span>
-<span class="co">#&gt; 2   1.5     0.903   0.477      0.453 -0.031 1.837 0.058    0.015    1.791</span>
-<span class="co">#&gt; 3     2     0.909   0.483      0.411 -0.037 1.855 0.060    0.104    1.714</span>
-<span class="co">#&gt; 4   2.5     0.875   0.477      0.478 -0.061 1.810 0.067   -0.062    1.811</span>
-<span class="co">#&gt; 5     3     0.852   0.492      0.453 -0.114 1.817 0.084   -0.037    1.740</span>
-<span class="co">#&gt; 6   3.5     0.849   0.492      0.440 -0.115 1.813 0.084   -0.014    1.712</span>
-<span class="co">#&gt; 7     4     0.822   0.503      0.439 -0.165 1.808 0.103   -0.039    1.682</span>
-<span class="co">#&gt; 8   4.5     0.812   0.495      0.419 -0.159 1.782 0.101   -0.010    1.634</span>
-<span class="co">#&gt; 9     5     0.804   0.492      0.423 -0.160 1.768 0.102   -0.025    1.633</span>
-<span class="co">#&gt;   p_val_wb</span>
-<span class="co">#&gt; 1    0.044</span>
-<span class="co">#&gt; 2    0.046</span>
-<span class="co">#&gt; 3    0.027</span>
-<span class="co">#&gt; 4    0.067</span>
-<span class="co">#&gt; 5    0.060</span>
-<span class="co">#&gt; 6    0.054</span>
-<span class="co">#&gt; 7    0.061</span>
-<span class="co">#&gt; 8    0.053</span>
-<span class="co">#&gt; 9    0.057</span></code></pre></div>
+<span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html" class="external-link">mutate_if</a></span><span class="op">(</span><span class="va">is.numeric</span>, <span class="va">formatC</span>, digits <span class="op">=</span> <span class="fl">3</span>, format <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 9 x 10</span>
+<span class="co">#&gt;   delta diff_rmst diff_sd diff_wb_sd lower  upper p_val lower_wb upper_wb</span>
+<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   </span>
+<span class="co">#&gt; 1 1     0.928     0.459   0.461      0.028  1.829 0.043 0.024    1.832   </span>
+<span class="co">#&gt; 2 1.5   0.903     0.477   0.453      -0.031 1.837 0.058 0.015    1.791   </span>
+<span class="co">#&gt; 3 2     0.909     0.483   0.411      -0.037 1.855 0.060 0.104    1.714   </span>
+<span class="co">#&gt; 4 2.5   0.875     0.477   0.478      -0.061 1.810 0.067 -0.062   1.811   </span>
+<span class="co">#&gt; 5 3     0.852     0.492   0.453      -0.114 1.817 0.084 -0.037   1.740   </span>
+<span class="co">#&gt; 6 3.5   0.849     0.492   0.440      -0.115 1.813 0.084 -0.014   1.712   </span>
+<span class="co">#&gt; 7 4     0.822     0.503   0.439      -0.165 1.808 0.103 -0.039   1.682   </span>
+<span class="co">#&gt; 8 4.5   0.812     0.495   0.419      -0.159 1.782 0.101 -0.010   1.634   </span>
+<span class="co">#&gt; 9 5     0.804     0.492   0.423      -0.160 1.768 0.102 -0.025   1.633   </span>
+<span class="co">#&gt; # … with 1 more variable: p_val_wb &lt;chr&gt;</span></code></pre></div>
 </div>
 </div>
 <div id="control-based-imputation" class="section level1">
