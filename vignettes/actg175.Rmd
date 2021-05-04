@@ -2,7 +2,7 @@
 title: "Example: actg175 dataset"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{actg175}
+  %\VignetteIndexEntry{Example: actg175 dataset}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
