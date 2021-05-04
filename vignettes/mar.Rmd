@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 # library(smim)
 library(survRM2)
+library(mvtnorm)
 devtools::load_all()
 ```
 
